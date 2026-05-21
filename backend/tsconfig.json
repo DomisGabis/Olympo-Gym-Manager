@@ -1,44 +1,14 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
-
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
-
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-
-    // Recommended Options
-    "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-  }
+    "target": "es2022",                                  /* Wersja docelowego ECMAScript */
+    "module": "commonjs",                                /* Moduły dla Node.js */
+    "rootDir": "./src",                                  /* Tu leży nasz kod źródłowy */
+    "outDir": "./dist",                                  /* Tu trafi skompilowany kod */
+    "esModuleInterop": true,                             /* KLUCZOWE: Naprawia błędy z importami Expressa */
+    "forceConsistentCasingInFileNames": true,            /* Wymusza spójność wielkości liter w ścieżkach */
+    "strict": true,                                      /* Ścisłe sprawdzanie typów */
+    "skipLibCheck": true                                 /* Przyspiesza kompilację, pomijając sprawdzanie typów w node_modules */
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
