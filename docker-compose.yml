@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  postgres:
+  olympo-db:
     image: postgres:15-alpine
-    container_name: olympo_postgres
-    restart: always
+    container_name: olympo_postgres_local
     environment:
-      POSTGRES_USER: olympo_admin
+      POSTGRES_USER: olympo_user
       POSTGRES_PASSWORD: olympo_password
-      POSTGRES_DB: olympo_db
+      POSTGRES_DB: olympo_management
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - olympo_db_data:/var/lib/postgresql/data
+    restart: always
 
 volumes:
-  postgres_data:
+  olympo_db_data:

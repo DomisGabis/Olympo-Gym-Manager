@@ -1,15 +1,161 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CLIENT
+  TRAINER
+  RECEPTIONIST
+  ADMIN
+}
+
+model User {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  password      String      
+  firstName     String
+  lastName      String
+  role          Role        @default(CLIENT)
+  qrCode        String?     @unique // Cyfrowy identyfikator klienta
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relacje
+  memberships   Membership[]
+  clubEntries   ClubEntry[]
+  
+  // Jako Klient w relacjach z trenerami
+  trainerRelationsAsClient TrainerUserRelation[] @relation("ClientToTrainer")
+  // Jako Trener w relacjach z klientami
+  clientRelationsAsTrainer TrainerUserRelation[] @relation("TrainerToClient")
+
+  @@map("users")
+}
+
+model Exercise {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  category    String      // Np. Klatka piersiowa, Nogi, Plecy
+  muscleParts String[]    // Tablica partii mięśniowych
+  level       String      // Poziom: Początkujący, Średni, Zaawansowany
+  videoUrl    String?     // Link do materiału wideo
+  description String?
+  createdAt   DateTime    @default(now())
+
+  // Relacje
+  planEntries PlanEntry[]
+
+  @@map("exercises")
+}
+
+model ClubEntry {
+  id         String    @id @default(uuid())
+  userId     String
+  checkIn    DateTime  @default(now())
+  checkOut   DateTime?
+  status     String    // Np. "AUTHORIZED", "REJECTED"
+
+  // Relacje
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("club_entries")
+}
+
+model TrainerUserRelation {
+  id         String    @id @default(uuid())
+  clientId   String
+  trainerId  String
+  createdAt  DateTime  @default(now())
+
+  // Relacje do użytkowników (podział ról na poziomie aplikacji/bazy)
+  client     User      @relation("ClientToTrainer", fields: [clientId], references: [id], onDelete: Cascade)
+  trainer    User      @relation("TrainerToClient", fields: [trainerId], references: [id], onDelete: Cascade)
+
+  // Powiązane procesy w systemie
+  trainingPlans TrainingPlan[]
+  messages      Message[]
+  calendarEntries CalendarEntry[]
+
+  @@unique([clientId, trainerId])
+  @@map("trainer_user_relations")
+}
+
+model CalendarEntry {
+  id         String              @id @default(uuid())
+  relationId String
+  title      String              // Np. "Konsultacja", "Trening personalny"
+  startAt    DateTime
+  endAt      DateTime
+  createdAt  DateTime            @default(now())
+
+  // Relacje
+  relation   TrainerUserRelation @relation(fields: [relationId], references: [id], onDelete: Cascade)
+
+  @@map("calendar_entries")
+}
+
+model TrainingPlan {
+  id         String              @id @default(uuid())
+  relationId String
+  title      String              // Np. "Plan Redukcji - Maj 2026"
+  startDate  DateTime
+  endDate    DateTime
+  progress   Int                 @default(0) // Procent ukończenia (np. 60%)
+  createdAt  DateTime            @default(now())
+
+  // Relacje
+  relation   TrainerUserRelation @relation(fields: [relationId], references: [id], onDelete: Cascade)
+  entries    PlanEntry[]
+
+  @@map("training_plans")
+}
+
+model PlanEntry {
+  id             String       @id @default(uuid())
+  trainingPlanId String
+  exerciseId     String
+  dayOfWeek      String       // Poniedziałek, Wtorek, etc.
+  setsCount      Int          // Liczba serii
+  repsRange      String       // Zakres powtórzeń (np. "8-12")
+  weight         Float?       // Sugerowany ciężar docelowy
+  isCompleted    Boolean      @default(false)
+
+  // Relacje
+  trainingPlan   TrainingPlan @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  exercise       Exercise     @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+
+  @@map("plan_entries")
+}
+
+model Message {
+  id         String              @id @default(uuid())
+  relationId String
+  senderId   String              // ID użytkownika wysyłającego (Client lub Trainer)
+  content    String
+  createdAt  DateTime            @default(now())
+
+  // Relacje
+  relation   TrainerUserRelation @relation(fields: [relationId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model Membership {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // Np. "OPEN_30", "OPEN_90", "STUDENT_30"
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("ACTIVE") // Np. "ACTIVE", "EXPIRED"
+  createdAt DateTime @default(now())
+
+  // Relacja powrotna do Użytkownika
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("memberships")
 }

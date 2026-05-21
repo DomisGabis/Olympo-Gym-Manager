@@ -4,6 +4,7 @@
     "module": "commonjs",                                /* Moduły dla Node.js */
     "rootDir": "./src",                                  /* Tu leży nasz kod źródłowy */
     "outDir": "./dist",                                  /* Tu trafi skompilowany kod */
+    "types": ["node"],                                   /* Typy dla Node.js */
     "esModuleInterop": true,                             /* KLUCZOWE: Naprawia błędy z importami Expressa */
     "forceConsistentCasingInFileNames": true,            /* Wymusza spójność wielkości liter w ścieżkach */
     "strict": true,                                      /* Ścisłe sprawdzanie typów */
