@@ -1,28 +1,25 @@
 /// <reference types="node" />
 import { PrismaClient, Role } from '@prisma/client';
-import bcrypt from 'bcrypt'; // 1. DODAJ IMPORT BCRYPT
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Rozpoczynanie zasiedlania bazy danych...');
 
-// 1. Czyszczenie starych danych (w bezpiecznej kolejności od dzieci do rodziców)
+
   await prisma.planEntry.deleteMany({});
   await prisma.trainingPlan.deleteMany({});
   await prisma.calendarEntry.deleteMany({});
   await prisma.message.deleteMany({});
   await prisma.trainerUserRelation.deleteMany({});
   await prisma.clubEntry.deleteMany({});
-  await prisma.membership.deleteMany({}); // Czyszczenie nowej tabeli karnetów
-  await prisma.exercise.deleteMany({});   // Teraz bez problemu usunie ćwiczenia
-  await prisma.user.deleteMany({});       // I na końcu użytkowników
+  await prisma.membership.deleteMany({});
+  await prisma.exercise.deleteMany({});
+  await prisma.user.deleteMany({});
 
-  // 2. WYGENEROWANIE PRAWDZIWEGO HASHA DLA HASŁA TESTOWEGO
-  // Liczba 10 to tzw. saltRounds (standardowa siła szyfrowania)
   const hashedPassword = await bcrypt.hash('hashed_password_123', 10);
 
-  // 3. Tworzenie podstawowych ćwiczeń
   const ex1 = await prisma.exercise.create({
     data: {
       name: 'Wyciskanie sztangi na ławce płaskiej',
@@ -47,11 +44,10 @@ async function main() {
 
   console.log('Utworzono bazowe ćwiczenia.');
 
-  // 4. Tworzenie użytkowników testowych (UŻYWAMY WYGENEROWANEGO HASHED_PASSWORD)
   const admin = await prisma.user.create({
     data: {
       email: 'admin@olympo.pl',
-      password: hashedPassword, // <-- POPRAWIONO Z 'hashed_password_123'
+      password: hashedPassword,
       firstName: 'Tomasz',
       lastName: 'Wiśniewski',
       role: Role.ADMIN,
@@ -61,7 +57,7 @@ async function main() {
   const trainer = await prisma.user.create({
     data: {
       email: 'anna.kowalska@olympo.pl',
-      password: hashedPassword, // <-- POPRAWIONO
+      password: hashedPassword,
       firstName: 'Anna',
       lastName: 'Kowalska',
       role: Role.TRAINER,
@@ -71,7 +67,7 @@ async function main() {
   const client = await prisma.user.create({
     data: {
       email: 'jan.kowalski@gmail.com',
-      password: hashedPassword, // <-- POPRAWIONO
+      password: hashedPassword,
       firstName: 'Jan',
       lastName: 'Kowalski',
       role: Role.CLIENT,
@@ -81,7 +77,6 @@ async function main() {
 
   console.log('Utworzono konta użytkowników.');
 
-  // 5. Nawiązanie współpracy Trener <-> Klient
   const relation = await prisma.trainerUserRelation.create({
     data: {
       clientId: client.id,
@@ -89,7 +84,6 @@ async function main() {
     }
   });
 
-  // 6. Przypisanie planu treningowego dla klienta przez trenera
   const plan = await prisma.trainingPlan.create({
     data: {
       relationId: relation.id,
@@ -111,7 +105,6 @@ async function main() {
     }
   });
 
-  // 7. Rejestracja testowego wejścia na siłownię przez kod QR
   await prisma.clubEntry.create({
     data: {
       userId: client.id,

@@ -13,15 +13,14 @@ const options = {
 passport.use(
   new JwtStrategy(options, async (jwtPayload, done) => {
     try {
-      // Szukamy użytkownika zapisanego w tokenie
       const user = await authService.findById(jwtPayload.id);
       
       if (user) {
         const { password, ...userWithoutPassword } = user;
-        return done(null, userWithoutPassword); // Sukces: użytkownik trafia do req.user
+        return done(null, userWithoutPassword);
       }
       
-      return done(null, false); // Token prawidłowy, ale użytkownik nie istnieje
+      return done(null, false);
     } catch (error) {
       return done(error, false);
     }

@@ -3,23 +3,16 @@ import { PrismaClient } from '@prisma/client';
 export class MembershipsService {
   private prisma = new PrismaClient();
 
-  // Statyczna lista dostępnych rodzajów karnetów (baza wiedzy dla frontendu)
   private membershipTypes = [
     { type: 'OPEN_30', name: 'Karnet Open 30 dni', price: 150, durationDays: 30 },
     { type: 'OPEN_90', name: 'Karnet Open 90 dni', price: 400, durationDays: 90 },
     { type: 'STUDENT_30', name: 'Karnet Studencki 30 dni', price: 110, durationDays: 30 }
   ];
 
-  /**
-   * Pobiera listę wszystkich dostępnych rodzajów karnetów
-   */
   async getTypes() {
     return this.membershipTypes;
   }
 
-  /**
-   * Zakup karnetu przez klienta i zapis do bazy danych
-   */
   async buyMembership(userId: string, typeCode: string) {
     const selectedType = this.membershipTypes.find(t => t.type === typeCode);
     if (!selectedType) {
@@ -30,8 +23,6 @@ export class MembershipsService {
     const endDate = new Date();
     endDate.setDate(startDate.getDate() + selectedType.durationDays);
 
-    // Zapisujemy aktywny karnet użytkownika do bazy PostgreSQL
-    // (Uwaga: Zakładamy model 'membership' w schema.prisma z polami: userId, type, startDate, endDate, status)
     return this.prisma.membership.create({
       data: {
         userId,
@@ -43,9 +34,6 @@ export class MembershipsService {
     });
   }
 
-  /**
-   * Pobiera aktualnie aktywny karnet przypisany do zalogowanego użytkownika
-   */
   async getByUserId(userId: string) {
     return this.prisma.membership.findFirst({
       where: {
@@ -55,9 +43,6 @@ export class MembershipsService {
     });
   }
 
-  /**
-   * Rejestracja wejścia klienta na siłownię (Check-in) przez Pracownika Recepcji
-   */
   async checkIn(qrCode: string) {
     const user = await this.prisma.user.findUnique({
       where: { qrCode }
@@ -96,9 +81,7 @@ export class MembershipsService {
     };
   }
 
-  /**
-   * Rejestracja wyjścia klienta z siłowni (Check-out)
-   */
+  // Rejestracja wyjścia klienta z siłowni (Check-out)
   async checkOut(userId: string) {
     const activeEntry = await this.prisma.clubEntry.findFirst({
       where: {

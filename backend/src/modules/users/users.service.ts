@@ -19,7 +19,7 @@ export class UsersService {
     // Pobiera z bazy wszystkich użytkowników, automatycznie odrzucając hasła
     return this.prisma.user.findMany({
       select: this.userSelectWithoutPassword,
-      orderBy: { lastName: 'asc' } // Opcjonalnie: sortowanie alfabetyczne po nazwisku
+      orderBy: { lastName: 'asc' }
     });
   }
 
