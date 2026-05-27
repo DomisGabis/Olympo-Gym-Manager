@@ -19,7 +19,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-   let qrCode: string | null = null;
+    let qrCode: string | null = null;
     if (role === 'CLIENT' || !role) {
       qrCode = `OLYMPO-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
     }
@@ -58,7 +58,7 @@ export class AuthService {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       this.jwtSecret,
-      { expiresIn: '1d' } // Token ważny 24 godziny
+      { expiresIn: '1d' }
     );
 
     const { password: _, ...userWithoutPassword } = user;
@@ -69,5 +69,14 @@ export class AuthService {
     return this.prisma.user.findUnique({
       where: { id }
     });
+  }
+
+  // NOWA METODA: Usuwanie użytkownika po ID
+  async delete(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new Error('Nie znaleziono użytkownika o podanym ID.');
+    }
+    return this.prisma.user.delete({ where: { id } });
   }
 }

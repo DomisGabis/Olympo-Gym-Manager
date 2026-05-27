@@ -4,6 +4,10 @@ import passport from './modules/auth/passport';
 import authRouter from './modules/auth/auth.routes';
 import usersRouter from './modules/users/users.routes';
 import membershipsRouter from './modules/memberships/memberships.routes';
+import trainingPlansRouter from './modules/training-plans/training-plans.routes';
+import exercisesRouter from './modules/exercises/exercises.routes';
+import calendarRouter from './modules/calendar/calendar.routes';
+import messagesRouter from './modules/messages/messages.routes';
 
 const app: Application = express();
 
@@ -15,6 +19,10 @@ app.use(passport.initialize());
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/memberships', membershipsRouter);
+app.use('/api/training-plans', trainingPlansRouter);
+app.use('/api/exercises', exercisesRouter);
+app.use('/api/calendar', calendarRouter);
+app.use('/api/messages', messagesRouter);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'Olympo API works fine!' });

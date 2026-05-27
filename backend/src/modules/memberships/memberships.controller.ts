@@ -4,7 +4,7 @@ import { MembershipsService } from './memberships.service';
 const membershipsService = new MembershipsService();
 
 export class MembershipsController {
-  // === SEKCA OBSŁUGI KARNETÓW (KLIENT) ===
+  // === SEKCJA OBSŁUGI KARNETÓW (KLIENT) ===
 
   async getTypes(req: Request, res: Response) {
     try {
@@ -20,10 +20,23 @@ export class MembershipsController {
       const userPayload = req.user as any;
       const { type } = req.body; 
 
+      if (!type) {
+        return res.status(400).json({ success: false, message: 'Wymagane jest podanie typu karnetu (type).' });
+      }
+
       const membership = await membershipsService.buyMembership(userPayload.id, type);
+      
+      // NOWOŚĆ: Sprawdzamy czy karnet startuje dzisiaj, czy w przyszłości (jest zakolejkowany)
+      const now = new Date();
+      const isQueued = new Date(membership.startDate) > now;
+      
+      const message = isQueued
+        ? 'Karnet został pomyślnie zakupiony i dodany do kolejki (aktywuje się automatycznie po wygaśnięciu obecnego).'
+        : 'Karnet został pomyślnie zakupiony i aktywowany!';
+
       return res.status(201).json({
         success: true,
-        message: 'Karnet został pomyślnie zakupiony i aktywowany!',
+        message,
         data: membership
       });
     } catch (error: any) {
@@ -35,7 +48,12 @@ export class MembershipsController {
     try {
       const userPayload = req.user as any;
       const membership = await membershipsService.getByUserId(userPayload.id);
-      return res.status(200).json({ success: true, data: membership });
+      
+      return res.status(200).json({ 
+        success: true, 
+        data: membership,
+        message: membership ? 'Pobrano aktywny karnet.' : 'Brak aktywnego karnetu w tym momencie.'
+      });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
     }
@@ -46,8 +64,11 @@ export class MembershipsController {
   async checkIn(req: Request, res: Response) {
     try {
       const { qrCode } = req.body;
-      if (!qrCode) throw new Error('Wymagane jest przesłanie kodu qrCode.');
+      if (!qrCode) {
+        return res.status(400).json({ success: false, message: 'Wymagane jest przesłanie kodu qrCode.' });
+      }
 
+      // Serwis sam rzuci błąd, jeśli klient nie ma ważnego karnetu lub już jest w środku
       const result = await membershipsService.checkIn(qrCode);
       return res.status(200).json({ success: true, ...result });
     } catch (error: any) {
@@ -58,7 +79,9 @@ export class MembershipsController {
   async checkOut(req: Request, res: Response) {
     try {
       const { userId } = req.body;
-      if (!userId) throw new Error('Wymagane jest przesłanie identyfikatora userId.');
+      if (!userId) {
+        return res.status(400).json({ success: false, message: 'Wymagane jest przesłanie identyfikatora userId.' });
+      }
 
       const result = await membershipsService.checkOut(userId);
       return res.status(200).json({ success: true, ...result });

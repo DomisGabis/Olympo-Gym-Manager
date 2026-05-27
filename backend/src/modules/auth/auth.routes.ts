@@ -18,4 +18,12 @@ router.get(
   }
 );
 
+// NOWA ŚCIEŻKA: Bezpieczne usuwanie użytkownika
+router.delete(
+  '/users/:id',
+  passport.authenticate('jwt', { session: false }),
+  authorizeRoles('ADMIN'),
+  authController.delete
+);
+
 export default router;
