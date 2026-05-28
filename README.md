@@ -1,4 +1,3 @@
-````md
 # Olympo Gym Manager - Backend API
 
 Kompleksowy system ERP/CRM do zarządzania klubem fitness, automatyzacji pracy recepcji, obsługi karnetów oraz prowadzenia cyfrowej współpracy na linii **Trener ↔ Klient**.
@@ -13,20 +12,36 @@ Projekt został zbudowany przy użyciu:
 
 ---
 
-# Globalna Mechanika Paginacji i Leniwego Ładowania
+# Architektura Systemu i Moduły
 
-Aby zapewnić maksymalną wydajność aplikacji, zminimalizować zużycie danych pakietowych na urządzeniach mobilnych oraz odciążyć bazę danych, w modułach generujących długie listy danych zastosowano mechanizm **Paginacji (Offset Pagination)**.
+Aplikacja została zaprojektowana w architekturze modułowej. Każdy moduł odpowiada za osobną domenę biznesową i posiada własne:
+
+- serwisy (`*.service.ts`),
+- kontrolery (`*.controller.ts`),
+- routing (`*.routes.ts`),
+- middleware autoryzacyjne,
+- logikę biznesową.
 
 ---
 
-## Jak z tego korzystać (Query Parameters)
+# Globalna Mechanika Paginacji i Leniwego Ładowania
 
-Wszystkie endpointy obsługujące paginację przyjmują dwa opcjonalne parametry w Query String:
+Aby zapewnić wysoką wydajność aplikacji, ograniczyć obciążenie bazy danych oraz zmniejszyć transfer danych na urządzeniach mobilnych, system wykorzystuje mechanizm:
+
+- **Offset Pagination**
+- **Lazy Loading**
+- **Messenger-like Sync**
+
+---
+
+## Query Parameters
+
+Wszystkie endpointy obsługujące paginację przyjmują opcjonalne parametry:
 
 | Parametr | Domyślna wartość | Opis |
 |---|---|---|
-| `page` | `1` | Numer strony do pobrania |
-| `limit` | `10` lub `20` | Liczba rekordów zwracanych na jednej stronie |
+| `page` | `1` | Numer strony |
+| `limit` | `10` lub `20` | Liczba rekordów |
 
 ### Przykład
 
@@ -36,9 +51,7 @@ GET /api/exercises?page=2&limit=10
 
 ---
 
-## Struktura Odpowiedzi (Response Schema)
-
-Zamiast surowej tablicy, endpointy paginowane zwracają ustrukturyzowany obiekt zawierający dane biznesowe oraz metadane wspierające frontend (np. przyciski stron lub infinite scroll).
+## Struktura Odpowiedzi
 
 ```json
 {
@@ -55,21 +68,21 @@ Zamiast surowej tablicy, endpointy paginowane zwracają ustrukturyzowany obiekt 
 
 ---
 
-# Specyfika Paginacji w Komunikatorze (Messenger-like Sync)
+## Paginacja w Komunikatorze (Messenger-like Sync)
 
-W przypadku modułu wiadomości paginacja działa odwrotnie niż w standardowych katalogach danych.
+Moduł wiadomości działa inaczej niż standardowa paginacja katalogów danych.
 
-## Mechanizm działania
+### Mechanizm działania
 
-1. Backend sortuje wiadomości malejąco (`desc`) według daty utworzenia.
-2. Pobierana jest określona liczba najnowszych wiadomości.
-3. Przed wysłaniem odpowiedzi tablica zostaje odwrócona metodą `.reverse()`.
+1. Backend pobiera wiadomości malejąco (`desc`)
+2. Zwracane są najnowsze wpisy
+3. Tablica zostaje odwrócona przez `.reverse()`
 
-Dzięki temu frontend otrzymuje wiadomości:
+Dzięki temu frontend otrzymuje:
 
-- chronologicznie (starsze → nowsze),
-- z możliwością łatwego dociągania starszych wiadomości,
-- kompatybilnie z mechaniką komunikatorów typu Messenger.
+- naturalny układ chronologiczny,
+- możliwość dociągania starszych wiadomości,
+- mechanikę identyczną jak Messenger / WhatsApp.
 
 ### Przykład
 
@@ -81,7 +94,7 @@ GET /api/messages/15?page=2&limit=20
 
 # Autoryzacja
 
-Wszystkie chronione endpointy wymagają przesłania tokenu JWT w nagłówku:
+Wszystkie chronione endpointy wymagają tokenu JWT:
 
 ```http
 Authorization: Bearer <TWÓJ_TOKEN_JWT>
@@ -89,32 +102,51 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 
 ---
 
-# Architektura Systemu i Dokumentacja Endpointów
+# Dostępne Role Systemowe
+
+| Rola | Opis |
+|---|---|
+| `CLIENT` | Standardowy klient siłowni |
+| `TRAINER` | Trener personalny |
+| `RECEPTIONIST` | Obsługa recepcji |
+| `ADMIN` | Administrator systemu |
 
 ---
 
 # 1. Users & Auth (Użytkownicy i Autoryzacja)
 
-Obsługa:
+## Za co odpowiada moduł
 
-- rejestracji,
-- logowania,
-- JWT,
-- RBAC,
-- zarządzania użytkownikami,
-- profilu użytkownika.
+- rejestracja użytkowników,
+- logowanie,
+- JWT Authentication,
+- Role Based Access Control (RBAC),
+- zarządzanie użytkownikami,
+- profile użytkowników.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+|---|---|
+| `User` | `users` |
+
+---
+
+## Endpointy
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| POST | `/api/auth/register` | Publiczny | Rejestracja nowego użytkownika |
-| POST | `/api/auth/login` | Publiczny | Logowanie oraz zwrot JWT |
-| GET | `/api/auth/admin-dashboard` | ADMIN | Test autoryzacji administratora |
-| DELETE | `/api/auth/users/:id` | ADMIN | Kaskadowe usunięcie użytkownika |
-| GET | `/api/users/profile` | Zalogowani użytkownicy | Profil aktualnego użytkownika |
-| GET | `/api/users/trainers` | Zalogowani użytkownicy | Lista trenerów z paginacją |
-| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli |
+| POST | `/api/auth/register` | Publiczny | Rejestracja użytkownika |
+| POST | `/api/auth/login` | Publiczny | Logowanie i JWT |
+| GET | `/api/auth/admin-dashboard` | ADMIN | Test autoryzacji |
+| DELETE | `/api/auth/users/:id` | ADMIN | Kaskadowe usuwanie użytkownika |
+| GET | `/api/users/profile` | Wszyscy zalogowani | Profil użytkownika |
+| GET | `/api/users/trainers` | Wszyscy zalogowani | Lista trenerów |
+| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników |
 
-### Przykład filtrowania
+### Przykład
 
 ```http
 GET /api/users?role=CLIENT&page=1&limit=10
@@ -124,64 +156,126 @@ GET /api/users?role=CLIENT&page=1&limit=10
 
 # 2. Memberships (Obsługa Karnetów i Subskrypcji)
 
-Moduł odpowiedzialny wyłącznie za stronę sprzedażową oraz finansową członkostwa.
+## Za co odpowiada moduł
 
-System umożliwia:
+Moduł odpowiada wyłącznie za:
 
-- przeglądanie dostępnych karnetów,
-- zakup subskrypcji,
-- sprawdzanie statusu członkostwa,
-- automatyczne kolejkowanie karnetów.
+- sprzedaż karnetów,
+- zarządzanie subskrypcjami,
+- aktywację członkostw,
+- kolejkę oczekujących karnetów,
+- status ważności członkostwa.
+
+---
 
 ## Mechanizm Kolejkowania Karnetów
 
 Jeżeli klient posiada aktywny karnet i zakupi kolejny:
 
-1. nowy karnet otrzymuje status oczekujący,
+1. nowy karnet otrzymuje status `PENDING`,
 2. pozostaje w kolejce,
-3. aktywuje się automatycznie dzień po wygaśnięciu poprzedniego członkostwa.
+3. aktywuje się automatycznie po wygaśnięciu poprzedniego.
 
-Dzięki temu system obsługuje ciągłość subskrypcji bez ingerencji recepcji.
+Dzięki temu system zapewnia ciągłość członkostwa bez ingerencji recepcji.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+|---|---|
+| `Membership` | `memberships` |
+| `User` | `users` |
+
+---
+
+## Endpointy
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| GET | `/api/memberships/types` | Wszyscy zalogowani | Pobranie cennika i dostępnych rodzajów karnetów |
-| POST | `/api/memberships/buy` | CLIENT | Zakup karnetu z obsługą automatycznego kolejkowania |
-| GET | `/api/memberships/my` | CLIENT | Pobranie szczegółów aktywnego karnetu i jego ważności |
+| GET | `/api/memberships/types` | Wszyscy zalogowani | Lista karnetów |
+| POST | `/api/memberships/buy` | CLIENT | Zakup karnetu |
+| GET | `/api/memberships/my` | CLIENT | Status aktywnego karnetu |
 
 ---
 
 # 3. Check-In (Rejestracja Wizyt i Obecności)
 
-Moduł odpowiedzialny za fizyczną kontrolę dostępu do strefy treningowej klubu fitness.
+## Za co odpowiada moduł
+
+Moduł odpowiada za fizyczną kontrolę dostępu do klubu fitness.
 
 System:
 
-- weryfikuje aktywne członkostwo w czasie rzeczywistym,
-- rejestruje wejścia oraz wyjścia,
-- zapobiega podwójnym wejściom,
-- utrzymuje spójność danych obecności klientów.
-
-| Metoda | Endpoint | Dostęp | Opis |
-|---|---|---|---|
-| POST | `/api/check-in/in` | RECEPTIONIST, ADMIN | Skanowanie `qrCode` i rejestracja wejścia klienta |
-| POST | `/api/check-in/out` | RECEPTIONIST, ADMIN | Rejestracja wyjścia klienta na podstawie `userId` |
+- weryfikuje aktywne członkostwo,
+- obsługuje wejścia i wyjścia,
+- blokuje podwójne wejścia,
+- zapisuje historię obecności.
 
 ---
 
-# 4. Exercises (Katalog Ćwiczeń)
+## Wykorzystywane tabele
 
-Kompleksowa baza ćwiczeń wykorzystywana przy budowaniu planów treningowych.
+| Model Prisma | Tabela SQL |
+|---|---|
+| `ClubEntry` | `club_entries` |
+| `Membership` | `memberships` |
+| `User` | `users` |
+
+---
+
+## Endpointy
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| GET | `/api/exercises` | Zalogowani użytkownicy | Lista ćwiczeń z paginacją |
-| GET | `/api/exercises/:id` | Zalogowani użytkownicy | Szczegóły ćwiczenia |
+| POST | `/api/check-in/in` | RECEPTIONIST, ADMIN | Rejestracja wejścia |
+| POST | `/api/check-in/out` | RECEPTIONIST, ADMIN | Rejestracja wyjścia |
+
+---
+
+# 4. Exercises (Baza Ćwiczeń)
+
+## Za co odpowiada moduł
+
+- katalog ćwiczeń,
+- filtrowanie kategorii,
+- poziomy trudności,
+- CRUD ćwiczeń,
+- zarządzanie biblioteką treningową.
+
+---
+
+## Zabezpieczenia Bazy
+
+Zastosowano regułę:
+
+```prisma
+onDelete: Restrict
+```
+
+Ćwiczenie nie może zostać usunięte, jeśli jest wykorzystywane w planie treningowym.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+|---|---|
+| `Exercise` | `exercises` |
+
+---
+
+## Endpointy
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| GET | `/api/exercises` | Wszyscy zalogowani | Lista ćwiczeń |
+| GET | `/api/exercises/:id` | Wszyscy zalogowani | Szczegóły ćwiczenia |
 | POST | `/api/exercises` | TRAINER, ADMIN | Dodanie ćwiczenia |
 | PUT | `/api/exercises/:id` | TRAINER, ADMIN | Edycja ćwiczenia |
 | DELETE | `/api/exercises/:id` | ADMIN | Usunięcie ćwiczenia |
 
-### Przykład filtrowania
+### Przykład
 
 ```http
 GET /api/exercises?category=Nogi&level=INTERMEDIATE
@@ -189,43 +283,132 @@ GET /api/exercises?category=Nogi&level=INTERMEDIATE
 
 ---
 
-# 5. Training Plans (Plany Treningowe)
+# 5. Training Plans (Plany Treningowe i Progres)
 
-System zarządzania planami treningowymi oraz śledzenia progresu klientów.
+## Za co odpowiada moduł
+
+System umożliwia trenerom tworzenie kompleksowych planów treningowych dla klientów.
+
+Klient otrzymuje:
+
+- checklistę ćwiczeń,
+- monitoring progresu,
+- aktualny status realizacji planu.
+
+---
+
+## Auto-Progres
+
+Po oznaczeniu ćwiczenia jako wykonane:
+
+```ts
+isCompleted: true
+```
+
+backend automatycznie:
+
+- przelicza progres planu,
+- aktualizuje procent ukończenia,
+- zapisuje zmiany w bazie.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+|---|---|
+| `TrainingPlan` | `training_plans` |
+| `PlanEntry` | `plan_entries` |
+| `Exercise` | `exercises` |
+| `TrainerUserRelation` | `trainer_user_relations` |
+
+---
+
+## Endpointy
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| POST | `/api/training-plans` | TRAINER, ADMIN | Utworzenie planu treningowego |
-| GET | `/api/training-plans/my` | CLIENT | Pobranie własnych planów |
-| GET | `/api/training-plans/client/:id` | TRAINER, ADMIN | Pobranie planów klienta |
-| PATCH | `/api/training-plans/entries/:id` | CLIENT | Oznaczenie ćwiczenia jako wykonane |
+| POST | `/api/training-plans` | TRAINER, ADMIN | Utworzenie planu |
+| GET | `/api/training-plans/my` | CLIENT | Pobranie planów |
+| GET | `/api/training-plans/client/:id` | TRAINER, ADMIN | Podgląd klienta |
+| PATCH | `/api/training-plans/entries/:id` | CLIENT | Aktualizacja progresu |
 
 ---
 
 # 6. Calendar (Harmonogram i Rezerwacje)
 
-Moduł odpowiedzialny za:
+## Za co odpowiada moduł
 
-- grafik trenerów,
+- treningi personalne,
 - konsultacje,
-- rezerwacje treningów personalnych.
+- rezerwacje,
+- harmonogram trenerów,
+- grafik klientów.
+
+---
+
+## Inteligentny Endpoint `/my`
+
+- trener widzi wszystkich podopiecznych,
+- klient widzi tylko własne sesje.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+|---|---|
+| `CalendarEntry` | `calendar_entries` |
+| `TrainerUserRelation` | `trainer_user_relations` |
+| `User` | `users` |
+
+---
+
+## Endpointy
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
 | POST | `/api/calendar/book` | TRAINER, ADMIN | Rezerwacja spotkania |
-| GET | `/api/calendar/my` | CLIENT, TRAINER | Harmonogram użytkownika |
-| DELETE | `/api/calendar/:id` | CLIENT, TRAINER, ADMIN | Anulowanie rezerwacji |
+| GET | `/api/calendar/my` | CLIENT, TRAINER | Harmonogram |
+| DELETE | `/api/calendar/:id` | CLIENT, TRAINER, ADMIN | Anulowanie |
 
 ---
 
 # 7. Messages (Wewnętrzny Komunikator)
 
-Moduł czatu tekstowego między trenerem a klientem.
+## Za co odpowiada moduł
+
+- czat trener ↔ klient,
+- historia wiadomości,
+- relacje partnerskie,
+- komunikacja wewnętrzna.
+
+---
+
+## Automatyczne Tworzenie Relacji
+
+Jeżeli trener i klient nie współpracowali wcześniej:
+
+- system automatycznie utworzy `TrainerUserRelation`,
+- relacja zostanie zapisana przy pierwszej wiadomości.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+|---|---|
+| `Message` | `messages` |
+| `TrainerUserRelation` | `trainer_user_relations` |
+
+---
+
+## Endpointy
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
 | POST | `/api/messages` | CLIENT, TRAINER | Wysłanie wiadomości |
-| GET | `/api/messages/:contactId` | CLIENT, TRAINER | Historia wiadomości z paginacją |
+| GET | `/api/messages/:contactId` | CLIENT, TRAINER | Historia wiadomości |
 
 ### Body Example
 
@@ -238,30 +421,36 @@ Moduł czatu tekstowego między trenerem a klientem.
 
 ---
 
-# Relacja Trainer ↔ Client (TrainerUserRelation)
+# Rola Tabeli Pośredniej (`TrainerUserRelation`)
 
-Większość modułów współpracy opiera się na tabeli pośredniej:
+Większość modułów współpracy korzysta z relacji pośredniej:
 
 ```prisma
 TrainerUserRelation
 ```
 
-Tabela wykorzystuje unikalny klucz złożony:
+Klucz złożony:
 
 ```prisma
 @@unique([clientId, trainerId])
 ```
 
-Dzięki temu:
+Gwarantuje:
 
-- jedna para trener–klient istnieje tylko raz,
-- dane pozostają spójne,
-- usunięcie użytkownika automatycznie czyści:
-  - plany treningowe,
-  - wiadomości,
-  - wydarzenia kalendarza.
+- unikalność relacji trener ↔ klient,
+- spójność danych,
+- bezpieczeństwo relacji.
 
-Mechanizm wykorzystuje:
+---
+
+## Cascade Delete
+
+Usunięcie użytkownika automatycznie usuwa:
+
+- plany treningowe,
+- wiadomości,
+- wpisy kalendarza,
+- relacje partnerskie.
 
 ```prisma
 onDelete: Cascade
@@ -269,9 +458,7 @@ onDelete: Cascade
 
 ---
 
-# Uruchomienie Projektu Lokalnie
-
----
+# Jak Uruchomić Projekt Lokalnie
 
 ## 1. Instalacja zależności
 
@@ -281,9 +468,7 @@ npm install
 
 ---
 
-## 2. Konfiguracja zmiennych środowiskowych
-
-Utwórz plik `.env` w katalogu głównym projektu:
+## 2. Konfiguracja `.env`
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/olympo_db?schema=public"
@@ -293,7 +478,7 @@ PORT=3000
 
 ---
 
-## 3. Migracje bazy danych
+## 3. Migracje Bazy Danych
 
 ```bash
 npx prisma migrate dev --name init
@@ -301,49 +486,8 @@ npx prisma migrate dev --name init
 
 ---
 
-## 4. Uruchomienie aplikacji
+## 4. Uruchomienie Serwera
 
 ```bash
 npm run dev
 ```
-
----
-
-# Stack Technologiczny
-
-## Backend
-
-- Node.js
-- Express.js
-- TypeScript
-- Prisma ORM
-- PostgreSQL
-
-## Bezpieczeństwo
-
-- JWT Authentication
-- Role Based Access Control (RBAC)
-- Hashowanie haseł
-- Middleware autoryzacyjne
-
-## Architektura
-
-- REST API
-- Modular Architecture
-- Service Layer Pattern
-- Prisma Relations
-- Offset Pagination
-- Lazy Loading Strategy
-
----
-
-# Status Projektu
-
-Projekt rozwijany jako kompleksowy backend ERP/CRM dla branży fitness z naciskiem na:
-
-- automatyzację pracy recepcji,
-- komunikację trener ↔ klient,
-- skalowalność,
-- wydajność,
-- architekturę produkcyjną.
-````
