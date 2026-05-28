@@ -3,7 +3,7 @@ import { PrismaClient, Role } from '@prisma/client';
 export class UsersService {
   private prisma = new PrismaClient();
 
-  // Wspólny obiekt konfiguracji wykluczający hasło – unikamy powtórzeń w kodzie
+  // Wspólny obiekt konfiguracji wykluczający hasło
   private userSelectWithoutPassword = {
     id: true,
     email: true,
@@ -15,16 +15,39 @@ export class UsersService {
     updatedAt: true,
   };
 
-  async getAll() {
-    // Pobiera z bazy wszystkich użytkowników, automatycznie odrzucając hasła
-    return this.prisma.user.findMany({
-      select: this.userSelectWithoutPassword,
-      orderBy: { lastName: 'asc' }
-    });
+  // Pobiera użytkowników z paginacją i opcjonalnym filtrem roli (np. CLIENT, TRAINER)
+  async getAll(page: number, limit: number, role?: Role) {
+    const skip = (page - 1) * limit;
+    
+    const whereClause: any = {};
+    if (role) whereClause.role = role;
+
+    // Pobieramy dane oraz łączną liczbę użytkowników spełniających kryteria
+    const [data, totalItems] = await Promise.all([
+      this.prisma.user.findMany({
+        where: whereClause,
+        select: this.userSelectWithoutPassword,
+        skip: skip,
+        take: limit,
+        orderBy: { lastName: 'asc' }
+      }),
+      this.prisma.user.count({ where: whereClause })
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      data,
+      meta: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit
+      }
+    };
   }
 
   async getById(id: string) {
-    // Szuka użytkownika po unikalnym ID
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: this.userSelectWithoutPassword
@@ -37,14 +60,8 @@ export class UsersService {
     return user;
   }
 
-  async getTrainers() {
-    // Filtruje użytkowników po stronie bazy danych przy użyciu Enuma Role z Prismy
-    return this.prisma.user.findMany({
-      where: {
-        role: Role.TRAINER
-      },
-      select: this.userSelectWithoutPassword,
-      orderBy: { lastName: 'asc' }
-    });
+  // Wykorzystujemy elastyczność metody getAll do pobrania samych trenerów
+  async getTrainers(page: number, limit: number) {
+    return this.getAll(page, limit, Role.TRAINER);
   }
 }

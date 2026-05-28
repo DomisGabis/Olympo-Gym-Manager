@@ -36,13 +36,23 @@ export class MessagesController {
         return res.status(400).json({ success: false, message: 'Wymagane jest ID kontaktu w adresie URL.' });
       }
 
-      const messages = await messagesService.getConversation(
+      // Pobieramy parametry paginacji (Domyślnie: strona 1, ostatnich 20 wiadomości)
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+
+      const result = await messagesService.getConversation(
         userPayload.id, 
         contactId, 
-        userPayload.role
+        userPayload.role,
+        page,
+        limit
       );
       
-      return res.status(200).json({ success: true, data: messages });
+      return res.status(200).json({ 
+        success: true, 
+        data: result.data, 
+        meta: result.meta 
+      });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
     }

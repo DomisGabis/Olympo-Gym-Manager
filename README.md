@@ -1,68 +1,318 @@
 # Olympo Gym Manager - Backend API
 
-Kompleksowy system ERP/CRM do zarządzania klubem fitness, automatyzacji pracy recepcji, obsługi karnetów oraz prowadzenia cyfrowej współpracy na linii **Trener ↔ Klient**. 
+Kompleksowy system ERP/CRM do zarządzania klubem fitness, automatyzacji pracy recepcji, obsługi karnetów oraz prowadzenia cyfrowej współpracy na linii **Trener ↔ Klient**.
 
-Projekt został zbudowany przy użyciu **Node.js**, **Express**, **TypeScript** oraz **Prisma ORM** z bazą danych **PostgreSQL**.
+Projekt został zbudowany przy użyciu:
 
----
-
-## Architektura Systemu i Moduły
-
-Aplikacja została zaprojektowana w architekturze modułowej. Każdy moduł odpowiada za osobną domenę biznesową, posiada własne serwisy (`.service.ts`), kontrolery (`.controller.ts`) oraz ścieżki routingu (`.routes.ts`).
-
-### 1. Moduł: Users & Auth (Użytkownicy i Autoryzacja)
-* **Za co odpowiada:** Rejestracja użytkowników, bezpieczne haszowanie haseł (bcrypt), logowanie oraz generowanie tokenów **JWT (Passport.js)**. Moduł ten odpowiada również za kontrolę dostępu na poziomie ról (RBAC) przy użyciu middleware `authorizeRoles`.
-* **Dostępne role w systemie:** `CLIENT`, `TRAINER`, `RECEPTIONIST`, `ADMIN`.
-* **Wykorzystywane tabele (Prisma):** `User` (mapowana na `users`).
-
-### 2. Moduł: Memberships (Obsługa Karnetów i Recepcji)
-* **Za co odpowiada:** * **Dla Klienta:** Przeglądanie oferty, zakup karnetów oraz pobieranie informacji o swoim aktualnym statusie członkowskim. Zawiera zaawansowaną logikę **kolejkowania karnetów** (jeśli klient ma aktywny karnet, kolejny zakupi jako "oczekujący w kolejce" i aktywuje się on automatycznie).
-    * **Dla Recepcji / Admina:** Skanowanie cyfrowych kodów QR (`qrCode`) klientów przy wejściu do klubu. System waliduje ważność karnetu i rejestruje dokładny czas wejścia oraz wyjścia z obiektu.
-* **Wykorzystywane tabele (Prisma):** `Membership` (`memberships`), `ClubEntry` (`club_entries`), `User`.
-
-### 3.  Moduł: Exercises (Baza Ćwiczeń)
-* **Za co odpowiada:** Pełny system zarządzania (CRUD) katalogiem ćwiczeń dostępnych na siłowni. Umożliwia filtrowanie ćwiczeń po kategoriach i poziomach trudności. Modyfikacja bazy jest zastrzeżona dla Trenerów i Administratorów, a usuwanie — ze względów bezpieczeństwa — wyłącznie dla Admina.
-* **Zabezpieczenia bazy:** Zastosowano regułę `Restrict` – nie można usunąć ćwiczenia z bazy, jeśli jakikolwiek klient ma je aktualnie przypisane w swoim planie treningowym.
-* **Wykorzystywane tabele (Prisma):** `Exercise` (`exercises`).
-
-### 4. Moduł: Training Plans (Plany Treningowe i Progres)
-* **Za co odpowiada:** Serce interakcji trenerskiej. Trener może rozpisać dla klienta kompletny, strukturyzowany plan treningowy na dany okres. Klient widzi go w swojej aplikacji jako interaktywną checklistę.
-* **Logika Premium (Auto-Progres):** Za każdym razem, gdy klient oznaczy pojedyncze ćwiczenie jako wykonane (`isCompleted: true`), backend automatycznie przelicza procentowy postęp całego planu i zapisuje go w bazie.
-* **Wykorzystywane tabele (Prisma):** `TrainingPlan` (`training_plans`), `PlanEntry` (`plan_entries`), `TrainerUserRelation`, `Exercise`.
-
-### 5. Moduł: Calendar (Harmonogram i Rezerwacje)
-* **Za co odpowiada:** Umawianie spotkań, konsultacji oraz treningów personalnych na żywo. Trener rezerwuje termin dla klienta, a system pilnuje poprawności dat (data zakończenia nie może być wcześniejsza niż rozpoczęcia). Punkt końcowy `/my` zachowuje się inteligentnie: trener widzi spotkania ze wszystkimi podopiecznymi, a klient widzi terminy swoich treningów z przypisanymi trenerami.
-* **Wykorzystywane tabele (Prisma):** `CalendarEntry` (`calendar_entries`), `TrainerUserRelation`, `User`.
-
-### 6. Moduł: Messages (Wewnętrzny Komunikator)
-* **Za co odpowiada:** Pozwala na bezpośredni czat tekstowy między trenerem a klientem wewnątrz aplikacji. Wiadomości są zapisywane chronologicznie. Moduł automatycznie tworzy relację partnerską (`TrainerUserRelation`) w bazie danych, jeśli do tej pory trener i klient nie współpracowali ze sobą, a jedna ze stron wyśle pierwszą wiadomość.
-* **Wykorzystywane tabele (Prisma):** `Message` (`messages`), `TrainerUserRelation`.
+- **Node.js**
+- **Express**
+- **TypeScript**
+- **Prisma ORM**
+- **PostgreSQL**
 
 ---
 
-## Rola Tabeli Pośredniej (`TrainerUserRelation`)
+# Globalna Mechanika Paginacji i Leniwego Ładowania
 
-Większość modułów dedykowanych współpracy (`Training Plans`, `Calendar`, `Messages`) nie łączy użytkowników bezpośrednio. Wszelkie interakcje opierają się na relacji zdefiniowanej w tabeli `TrainerUserRelation`. Posiada ona unikalny klucz złożony `@@unique([clientId, trainerId])`, co gwarantuje, że para Trener-Klient istnieje w systemie tylko raz, a usunięcie konta użytkownika (dzięki `onDelete: Cascade`) automatycznie czyści powiązane z nim plany, czaty i kalendarze.
+Aby zapewnić maksymalną wydajność aplikacji, zminimalizować zużycie danych pakietowych na urządzeniach mobilnych oraz odciążyć bazę danych, w modułach generujących długie listy danych zastosowano mechanizm **Paginacji (Offset Pagination)**.
 
 ---
 
-## Jak uruchomić projekt lokalnie
+## Jak z tego korzystać (Query Parameters)
 
-1.  **Zainstaluj zależności:**
-    ```bash
-    npm install
-    ```
-2.  **Skonfiguruj zmienne środowiskowe:** Create `.env` file i uzupełnij dane:
-    ```env
-    DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/olympo_db?schema=public"
-    JWT_SECRET="TwojSuperTajnyKluczDoTokenowJWT123"
-    PORT=3000
-    ```
-3.  **Uruchom migracje bazy danych i Seeder (automatyczne dane testowe):**
-    ```bash
-    npx prisma migrate dev --name init
-    ```
-4.  **Uruchom serwer w trybie deweloperskim:**
-    ```bash
-    npm run dev
-    ```
+Wszystkie endpointy obsługujące paginację przyjmują dwa opcjonalne parametry w Query String:
+
+| Parametr | Domyślna wartość | Opis |
+|---|---|---|
+| `page` | `1` | Numer strony do pobrania |
+| `limit` | `10` lub `20` | Liczba rekordów zwracanych na jednej stronie |
+
+### Przykład
+
+```http
+GET /api/exercises?page=2&limit=10
+```
+
+---
+
+## Struktura Odpowiedzi (Response Schema)
+
+Zamiast surowej tablicy, endpointy paginowane zwracają ustrukturyzowany obiekt zawierający dane biznesowe oraz metadane wspierające frontend (np. przyciski stron lub infinite scroll).
+
+```json
+{
+  "success": true,
+  "data": [],
+  "meta": {
+    "totalItems": 45,
+    "totalPages": 5,
+    "currentPage": 1,
+    "limit": 10
+  }
+}
+```
+
+---
+
+# Specyfika Paginacji w Komunikatorze (Messenger-like Sync)
+
+W przypadku modułu wiadomości paginacja działa odwrotnie niż w standardowych katalogach danych.
+
+## Mechanizm działania
+
+1. Backend sortuje wiadomości malejąco (`desc`) według daty utworzenia.
+2. Pobierana jest określona liczba najnowszych wiadomości.
+3. Przed wysłaniem odpowiedzi tablica zostaje odwrócona metodą `.reverse()`.
+
+Dzięki temu frontend otrzymuje wiadomości:
+
+- chronologicznie (starsze → nowsze),
+- z możliwością łatwego dociągania starszych wiadomości,
+- kompatybilnie z mechaniką komunikatorów typu Messenger.
+
+### Przykład
+
+```http
+GET /api/messages/15?page=2&limit=20
+```
+
+---
+
+# Autoryzacja
+
+Wszystkie chronione endpointy wymagają przesłania tokenu JWT w nagłówku:
+
+```http
+Authorization: Bearer <TWÓJ_TOKEN_JWT>
+```
+
+---
+
+# Architektura Systemu i Dokumentacja Endpointów
+
+---
+
+# 1. Users & Auth (Użytkownicy i Autoryzacja)
+
+Obsługa:
+
+- rejestracji,
+- logowania,
+- JWT,
+- RBAC,
+- zarządzania użytkownikami,
+- profilu użytkownika.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| POST | `/api/auth/register` | Publiczny | Rejestracja nowego użytkownika |
+| POST | `/api/auth/login` | Publiczny | Logowanie oraz zwrot JWT |
+| GET | `/api/auth/admin-dashboard` | ADMIN | Test autoryzacji administratora |
+| DELETE | `/api/auth/users/:id` | ADMIN | Kaskadowe usunięcie użytkownika |
+| GET | `/api/users/profile` | Zalogowani użytkownicy | Profil aktualnego użytkownika |
+| GET | `/api/users/trainers` | Zalogowani użytkownicy | Lista trenerów z paginacją |
+| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli |
+
+### Przykład filtrowania
+
+```http
+GET /api/users?role=CLIENT&page=1&limit=10
+```
+
+---
+
+# 2. Memberships (Karnety i Recepcja)
+
+Moduł odpowiedzialny za:
+
+- zakup karnetów,
+- zarządzanie subskrypcjami,
+- system wejść/wyjść QR,
+- obsługę recepcji.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| GET | `/api/memberships/types` | Zalogowani użytkownicy | Lista dostępnych karnetów |
+| POST | `/api/memberships/buy` | CLIENT | Zakup karnetu |
+| GET | `/api/memberships/my-status` | CLIENT | Status aktualnego karnetu |
+| POST | `/api/memberships/scan` | RECEPTIONIST, ADMIN | Skan kodu QR |
+
+---
+
+# 3. Exercises (Katalog Ćwiczeń)
+
+Kompleksowa baza ćwiczeń wykorzystywana przy budowaniu planów treningowych.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| GET | `/api/exercises` | Zalogowani użytkownicy | Lista ćwiczeń z paginacją |
+| GET | `/api/exercises/:id` | Zalogowani użytkownicy | Szczegóły ćwiczenia |
+| POST | `/api/exercises` | TRAINER, ADMIN | Dodanie ćwiczenia |
+| PUT | `/api/exercises/:id` | TRAINER, ADMIN | Edycja ćwiczenia |
+| DELETE | `/api/exercises/:id` | ADMIN | Usunięcie ćwiczenia |
+
+### Przykład filtrowania
+
+```http
+GET /api/exercises?category=Nogi&level=INTERMEDIATE
+```
+
+---
+
+# 4. Training Plans (Plany Treningowe)
+
+System zarządzania planami treningowymi oraz śledzenia progresu klientów.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| POST | `/api/training-plans` | TRAINER, ADMIN | Utworzenie planu treningowego |
+| GET | `/api/training-plans/my` | CLIENT | Pobranie własnych planów |
+| GET | `/api/training-plans/client/:id` | TRAINER, ADMIN | Pobranie planów klienta |
+| PATCH | `/api/training-plans/entries/:id` | CLIENT | Oznaczenie ćwiczenia jako wykonane |
+
+---
+
+# 5. Calendar (Harmonogram i Rezerwacje)
+
+Moduł odpowiedzialny za:
+
+- grafik trenerów,
+- konsultacje,
+- rezerwacje treningów personalnych.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| POST | `/api/calendar/book` | TRAINER, ADMIN | Rezerwacja spotkania |
+| GET | `/api/calendar/my` | CLIENT, TRAINER | Harmonogram użytkownika |
+| DELETE | `/api/calendar/:id` | CLIENT, TRAINER, ADMIN | Anulowanie rezerwacji |
+
+---
+
+# 6. Messages (Wewnętrzny Komunikator)
+
+Moduł czatu tekstowego między trenerem a klientem.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| POST | `/api/messages` | CLIENT, TRAINER | Wysłanie wiadomości |
+| GET | `/api/messages/:contactId` | CLIENT, TRAINER | Historia wiadomości z paginacją |
+
+### Body Example
+
+```json
+{
+  "receiverId": 15,
+  "content": "Cześć, pamiętaj o treningu nóg."
+}
+```
+
+---
+
+# Relacja Trainer ↔ Client (TrainerUserRelation)
+
+Większość modułów współpracy opiera się na tabeli pośredniej:
+
+```prisma
+TrainerUserRelation
+```
+
+Tabela wykorzystuje unikalny klucz złożony:
+
+```prisma
+@@unique([clientId, trainerId])
+```
+
+Dzięki temu:
+
+- jedna para trener–klient istnieje tylko raz,
+- dane pozostają spójne,
+- usunięcie użytkownika automatycznie czyści:
+  - plany treningowe,
+  - wiadomości,
+  - wydarzenia kalendarza.
+
+Mechanizm wykorzystuje:
+
+```prisma
+onDelete: Cascade
+```
+
+---
+
+# Uruchomienie Projektu Lokalnie
+
+---
+
+## 1. Instalacja zależności
+
+```bash
+npm install
+```
+
+---
+
+## 2. Konfiguracja zmiennych środowiskowych
+
+Utwórz plik `.env` w katalogu głównym projektu:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/olympo_db?schema=public"
+JWT_SECRET="TwojSuperTajnyKluczDoTokenowJWT123"
+PORT=3000
+```
+
+---
+
+## 3. Migracje bazy danych
+
+```bash
+npx prisma migrate dev --name init
+```
+
+---
+
+## 4. Uruchomienie aplikacji
+
+```bash
+npm run dev
+```
+
+---
+
+# Stack Technologiczny
+
+## Backend
+
+- Node.js
+- Express.js
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+
+## Bezpieczeństwo
+
+- JWT Authentication
+- Role Based Access Control (RBAC)
+- Hashowanie haseł
+- Middleware autoryzacyjne
+
+## Architektura
+
+- REST API
+- Modular Architecture
+- Service Layer Pattern
+- Prisma Relations
+- Offset Pagination
+- Lazy Loading Strategy
+
+---
+
+# Status Projektu
+
+Projekt rozwijany jako kompleksowy backend ERP/CRM dla branży fitness z naciskiem na:
+
+- automatyzację pracy recepcji,
+- komunikację trener ↔ klient,
+- skalowalność,
+- wydajność,
+- architekturę produkcyjną.

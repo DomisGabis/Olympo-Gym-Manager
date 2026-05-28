@@ -7,8 +7,19 @@ export class ExercisesController {
   async getAll(req: Request, res: Response) {
     try {
       const { category, level } = req.query;
-      const exercises = await exercisesService.getAll(category as string, level as string);
-      return res.status(200).json({ success: true, data: exercises });
+      
+      // Wyciągamy parametry paginacji z URL i zamieniamy na liczby
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const result = await exercisesService.getAll(page, limit, category as string, level as string);
+      
+      // Zwracamy strukturę z podziałem na dane i metadane paginacji
+      return res.status(200).json({ 
+        success: true, 
+        data: result.data, 
+        meta: result.meta 
+      });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
     }

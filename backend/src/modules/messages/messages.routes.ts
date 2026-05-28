@@ -14,7 +14,7 @@ router.post(
   controller.send
 );
 
-// 2. Pobranie historii czatu z danym kontaktem
+// 2. Pobranie historii czatu z danym kontaktem (Obsługuje: ?page=1&limit=20)
 router.get(
   '/:contactId',
   passport.authenticate('jwt', { session: false }),

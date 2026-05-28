@@ -10,9 +10,10 @@ const usersController = new UsersController();
 router.use(passport.authenticate('jwt', { session: false }));
 
 router.get('/profile', usersController.getProfile); // Każdy zalogowany widzi swój profil
-router.get('/trainers', usersController.getTrainers); // Każdy zalogowany widzi listę trenerów
+router.get('/trainers', usersController.getTrainers); // Każdy zalogowany widzi listę trenerów z paginacją
 
-// Tylko Administrator oraz Pracownik Recepcji mogą podejrzeć listę wszystkich użytkowników
+// Panel managera/recepcji: pozwala pobierać wszystkich, bądź filtrować:
+// np. GET /api/users?page=1&limit=20&role=CLIENT
 router.get('/', authorizeRoles('ADMIN', 'RECEPTIONIST'), usersController.getAllUsers);
 
 export default router;

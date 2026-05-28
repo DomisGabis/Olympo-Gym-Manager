@@ -3,16 +3,38 @@ import { PrismaClient } from '@prisma/client';
 export class ExercisesService {
   private prisma = new PrismaClient();
 
-  // Pobieranie wszystkich z opcjonalnym filtrowaniem (C - Read)
-  async getAll(category?: string, level?: string) {
+  // Pobieranie wszystkich z filtrowaniem i PAGINACJĄ (C - Read)
+  async getAll(page: number, limit: number, category?: string, level?: string) {
     const whereClause: any = {};
     if (category) whereClause.category = category;
     if (level) whereClause.level = level;
 
-    return this.prisma.exercise.findMany({
-      where: whereClause,
-      orderBy: { name: 'asc' }
-    });
+    // Przeliczamy ile rekordów pominąć
+    const skip = (page - 1) * limit;
+
+    // Pobieramy dane oraz łączną liczbę wpisów spełniających kryteria
+    const [data, totalItems] = await Promise.all([
+      this.prisma.exercise.findMany({
+        where: whereClause,
+        skip: skip,
+        take: limit,
+        orderBy: { name: 'asc' }
+      }),
+      this.prisma.exercise.count({ where: whereClause })
+    ]);
+
+    // Obliczamy całkowitą liczbę stron
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      data,
+      meta: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit
+      }
+    };
   }
 
   // Pobieranie pojedynczego po ID
@@ -24,7 +46,6 @@ export class ExercisesService {
 
   // Dodawanie nowego ćwiczenia (C - Create)
   async create(data: { name: string; category: string; muscleParts: string[]; level: string; videoUrl?: string; description?: string }) {
-    // Sprawdzamy czy nazwa już istnieje (żeby nie było duplikatów)
     const existing = await this.prisma.exercise.findUnique({ where: { name: data.name } });
     if (existing) throw new Error('Ćwiczenie o tej nazwie już istnieje w bazie.');
 
@@ -33,7 +54,6 @@ export class ExercisesService {
 
   // Aktualizacja ćwiczenia (U - Update)
   async update(id: string, data: any) {
-    // Prisma sama poradzi sobie z aktualizacją tylko tych pól, które zostały przesłane
     return this.prisma.exercise.update({
       where: { id },
       data
@@ -45,7 +65,6 @@ export class ExercisesService {
     try {
       return await this.prisma.exercise.delete({ where: { id } });
     } catch (error: any) {
-      // P2003 to błąd bazy PostgreSQL, gdy zadziała klucz obcy (u nas: onDelete: Restrict)
       if (error.code === 'P2003') {
         throw new Error('Nie można usunąć tego ćwiczenia, ponieważ jest już przypisane do aktywnych planów treningowych klientów.');
       }

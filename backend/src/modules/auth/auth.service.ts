@@ -71,7 +71,6 @@ export class AuthService {
     });
   }
 
-  // NOWA METODA: Usuwanie użytkownika po ID
   async delete(id: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
