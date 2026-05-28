@@ -22,18 +22,4 @@ router.get(
   membershipsController.getMyMembership
 );
 
-router.post(
-  '/checkin',
-  passport.authenticate('jwt', { session: false }),
-  authorizeRoles('RECEPTIONIST', 'ADMIN'),
-  membershipsController.checkIn
-);
-
-router.post(
-  '/checkout',
-  passport.authenticate('jwt', { session: false }),
-  authorizeRoles('RECEPTIONIST', 'ADMIN'),
-  membershipsController.checkOut
-);
-
 export default router;

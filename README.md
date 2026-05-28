@@ -1,3 +1,4 @@
+````md
 # Olympo Gym Manager - Backend API
 
 Kompleksowy system ERP/CRM do zarządzania klubem fitness, automatyzacji pracy recepcji, obsługi karnetów oraz prowadzenia cyfrowej współpracy na linii **Trener ↔ Klient**.
@@ -121,25 +122,54 @@ GET /api/users?role=CLIENT&page=1&limit=10
 
 ---
 
-# 2. Memberships (Karnety i Recepcja)
+# 2. Memberships (Obsługa Karnetów i Subskrypcji)
 
-Moduł odpowiedzialny za:
+Moduł odpowiedzialny wyłącznie za stronę sprzedażową oraz finansową członkostwa.
 
-- zakup karnetów,
-- zarządzanie subskrypcjami,
-- system wejść/wyjść QR,
-- obsługę recepcji.
+System umożliwia:
+
+- przeglądanie dostępnych karnetów,
+- zakup subskrypcji,
+- sprawdzanie statusu członkostwa,
+- automatyczne kolejkowanie karnetów.
+
+## Mechanizm Kolejkowania Karnetów
+
+Jeżeli klient posiada aktywny karnet i zakupi kolejny:
+
+1. nowy karnet otrzymuje status oczekujący,
+2. pozostaje w kolejce,
+3. aktywuje się automatycznie dzień po wygaśnięciu poprzedniego członkostwa.
+
+Dzięki temu system obsługuje ciągłość subskrypcji bez ingerencji recepcji.
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| GET | `/api/memberships/types` | Zalogowani użytkownicy | Lista dostępnych karnetów |
-| POST | `/api/memberships/buy` | CLIENT | Zakup karnetu |
-| GET | `/api/memberships/my-status` | CLIENT | Status aktualnego karnetu |
-| POST | `/api/memberships/scan` | RECEPTIONIST, ADMIN | Skan kodu QR |
+| GET | `/api/memberships/types` | Wszyscy zalogowani | Pobranie cennika i dostępnych rodzajów karnetów |
+| POST | `/api/memberships/buy` | CLIENT | Zakup karnetu z obsługą automatycznego kolejkowania |
+| GET | `/api/memberships/my` | CLIENT | Pobranie szczegółów aktywnego karnetu i jego ważności |
 
 ---
 
-# 3. Exercises (Katalog Ćwiczeń)
+# 3. Check-In (Rejestracja Wizyt i Obecności)
+
+Moduł odpowiedzialny za fizyczną kontrolę dostępu do strefy treningowej klubu fitness.
+
+System:
+
+- weryfikuje aktywne członkostwo w czasie rzeczywistym,
+- rejestruje wejścia oraz wyjścia,
+- zapobiega podwójnym wejściom,
+- utrzymuje spójność danych obecności klientów.
+
+| Metoda | Endpoint | Dostęp | Opis |
+|---|---|---|---|
+| POST | `/api/check-in/in` | RECEPTIONIST, ADMIN | Skanowanie `qrCode` i rejestracja wejścia klienta |
+| POST | `/api/check-in/out` | RECEPTIONIST, ADMIN | Rejestracja wyjścia klienta na podstawie `userId` |
+
+---
+
+# 4. Exercises (Katalog Ćwiczeń)
 
 Kompleksowa baza ćwiczeń wykorzystywana przy budowaniu planów treningowych.
 
@@ -159,7 +189,7 @@ GET /api/exercises?category=Nogi&level=INTERMEDIATE
 
 ---
 
-# 4. Training Plans (Plany Treningowe)
+# 5. Training Plans (Plany Treningowe)
 
 System zarządzania planami treningowymi oraz śledzenia progresu klientów.
 
@@ -172,7 +202,7 @@ System zarządzania planami treningowymi oraz śledzenia progresu klientów.
 
 ---
 
-# 5. Calendar (Harmonogram i Rezerwacje)
+# 6. Calendar (Harmonogram i Rezerwacje)
 
 Moduł odpowiedzialny za:
 
@@ -188,7 +218,7 @@ Moduł odpowiedzialny za:
 
 ---
 
-# 6. Messages (Wewnętrzny Komunikator)
+# 7. Messages (Wewnętrzny Komunikator)
 
 Moduł czatu tekstowego między trenerem a klientem.
 
@@ -316,3 +346,4 @@ Projekt rozwijany jako kompleksowy backend ERP/CRM dla branży fitness z naciski
 - skalowalność,
 - wydajność,
 - architekturę produkcyjną.
+````

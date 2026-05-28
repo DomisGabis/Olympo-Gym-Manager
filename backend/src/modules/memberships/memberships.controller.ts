@@ -26,7 +26,6 @@ export class MembershipsController {
 
       const membership = await membershipsService.buyMembership(userPayload.id, type);
       
-      // NOWOŚĆ: Sprawdzamy czy karnet startuje dzisiaj, czy w przyszłości (jest zakolejkowany)
       const now = new Date();
       const isQueued = new Date(membership.startDate) > now;
       
@@ -56,37 +55,6 @@ export class MembershipsController {
       });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
-    }
-  }
-
-  // === SEKCJA REJESTRACJI WEJŚĆ/WYJŚĆ (RECEPCJA / ADMIN) ===
-
-  async checkIn(req: Request, res: Response) {
-    try {
-      const { qrCode } = req.body;
-      if (!qrCode) {
-        return res.status(400).json({ success: false, message: 'Wymagane jest przesłanie kodu qrCode.' });
-      }
-
-      // Serwis sam rzuci błąd, jeśli klient nie ma ważnego karnetu lub już jest w środku
-      const result = await membershipsService.checkIn(qrCode);
-      return res.status(200).json({ success: true, ...result });
-    } catch (error: any) {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-  }
-
-  async checkOut(req: Request, res: Response) {
-    try {
-      const { userId } = req.body;
-      if (!userId) {
-        return res.status(400).json({ success: false, message: 'Wymagane jest przesłanie identyfikatora userId.' });
-      }
-
-      const result = await membershipsService.checkOut(userId);
-      return res.status(200).json({ success: true, ...result });
-    } catch (error: any) {
-      return res.status(400).json({ success: false, message: error.message });
     }
   }
 }
