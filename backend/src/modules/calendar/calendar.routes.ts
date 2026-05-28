@@ -6,27 +6,41 @@ import { authorizeRoles } from '../auth/role.middleware';
 const router = Router();
 const controller = new CalendarController();
 
-// 1. Umówienie spotkania (Tylko zalogowany TRENER)
+// Wszystkie trasy kalendarza wymagają zalogowania (JWT)
+router.use(passport.authenticate('jwt', { session: false }));
+
+// 1. Umówienie spotkania / Wysłanie prośby o termin (Dostęp: CLIENT i TRAINER)
 router.post(
   '/',
-  passport.authenticate('jwt', { session: false }),
-  authorizeRoles('TRAINER'),
+  authorizeRoles('CLIENT', 'TRAINER'),
   controller.create
 );
 
-// 2. Pobranie swojego grafiku (Zarówno CLIENT jak i TRAINER mają dostęp)
+// 2. Pobranie swojego grafiku (Zarówno CLIENT jak i TRAINER)
 router.get(
   '/my',
-  passport.authenticate('jwt', { session: false }),
   authorizeRoles('CLIENT', 'TRAINER'),
   controller.getMySchedule
 );
 
-// 3. Odwołanie terminu (Trener prowadzący lub Admin w sytuacjach kryzysowych)
+// 3. Widok Booksy: Klient sprawdza zajętość wybranego trenera przed rezerwacją
+router.get(
+  '/trainer/:trainerId',
+  authorizeRoles('CLIENT'),
+  controller.getTrainerScheduleForClient
+);
+
+// 4. Decyzja trenera: Zatwierdzenie lub odrzucenie rezerwacji klienta
+router.patch(
+  '/:id/status',
+  authorizeRoles('TRAINER'),
+  controller.handleApproval
+);
+
+// 5. Odwołanie terminu (Zabezpieczone w serwisie przed obcymi osobami)
 router.delete(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
-  authorizeRoles('TRAINER', 'ADMIN'),
+  authorizeRoles('CLIENT', 'TRAINER', 'ADMIN'),
   controller.delete
 );
 

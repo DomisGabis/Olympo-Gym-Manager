@@ -339,38 +339,55 @@ backend automatycznie:
 
 ## Za co odpowiada moduł
 
-- treningi personalne,
-- konsultacje,
-- rezerwacje,
-- harmonogram trenerów,
-- grafik klientów.
+Moduł odpowiada za:
+
+* zarządzanie harmonogramem trenerów personalnych,
+* rezerwacje treningów 1-na-1,
+* obsługę konsultacji,
+* system akceptacji terminów,
+* kontrolę dostępności trenerów,
+* bezpieczne anulowanie spotkań.
 
 ---
 
 ## Inteligentny Endpoint `/my`
 
-- trener widzi wszystkich podopiecznych,
-- klient widzi tylko własne sesje.
+Zwraca spersonalizowany grafik w zależności od roli zalogowanego użytkownika:
+* **Trener:** Widzi pełny harmonogram wszystkich swoich podopiecznych wraz z ich imionami i nazwiskami.
+* **Klient:** Widzi wyłącznie swoje własne zaplanowane sesje oraz przypisanych do nich trenerów.
 
 ---
 
+
 ## Wykorzystywane tabele
 
-| Model Prisma | Tabela SQL |
-|---|---|
-| `CalendarEntry` | `calendar_entries` |
-| `TrainerUserRelation` | `trainer_user_relations` |
-| `User` | `users` |
+| Model Prisma          | Tabela SQL               | Kluczowe pola                |
+| --------------------- | ------------------------ | ---------------------------- |
+| `CalendarEntry`       | `calendar_entries`       | `startAt`, `endAt`, `status` |
+| `TrainerUserRelation` | `trainer_user_relations` | Relacja trener ↔ klient      |
+| `User`                | `users`                  | Dane uczestników             |
+
+---
+
+## Statusy Rezerwacji
+
+| Status      | Opis                        |
+| ----------- | --------------------------- |
+| `PENDING`   | Oczekuje na decyzję trenera |
+| `CONFIRMED` | Rezerwacja zaakceptowana    |
+| `REJECTED`  | Rezerwacja odrzucona        |
 
 ---
 
 ## Endpointy
 
-| Metoda | Endpoint | Dostęp | Opis |
-|---|---|---|---|
-| POST | `/api/calendar/book` | TRAINER, ADMIN | Rezerwacja spotkania |
-| GET | `/api/calendar/my` | CLIENT, TRAINER | Harmonogram |
-| DELETE | `/api/calendar/:id` | CLIENT, TRAINER, ADMIN | Anulowanie |
+| Metoda | Endpoint                           | Dostęp                 | Opis                                               |
+| ------ | ---------------------------------- | ---------------------- | -------------------------------------------------- |
+| POST   | `/api/calendar`                    | CLIENT, TRAINER        | Utworzenie rezerwacji lub wysłanie prośby o termin |
+| GET    | `/api/calendar/my`                 | CLIENT, TRAINER        | Pobranie własnego harmonogramu                     |
+| GET    | `/api/calendar/trainer/:trainerId` | CLIENT                 | Publiczny widok zajętości trenera                  |
+| PATCH  | `/api/calendar/:id/status`         | TRAINER                | Akceptacja lub odrzucenie rezerwacji               |
+| DELETE | `/api/calendar/:id`                | CLIENT, TRAINER, ADMIN | Anulowanie rezerwacji                              |
 
 ---
 

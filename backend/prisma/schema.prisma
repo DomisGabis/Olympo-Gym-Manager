@@ -92,6 +92,7 @@ model CalendarEntry {
   startAt    DateTime
   endAt      DateTime
   createdAt  DateTime            @default(now())
+  status     String               @default("PENDING") // <-- DODAJ TĘ LINIJKĘ
 
   // Relacje
   relation   TrainerUserRelation @relation(fields: [relationId], references: [id], onDelete: Cascade)
