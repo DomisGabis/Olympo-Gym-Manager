@@ -26,40 +26,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Funkcja weryfikująca token z backendem
   const checkAuthStatus = async () => {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      setUser(null);
-      setIsLoading(false);
-      return;
-    }
+  const token = localStorage.getItem('token');
+  
+  // POPRAWKA 1: Jeśli nie ma tokenu, przerywamy funkcję NATYCHMIAST.
+  // Nie wysyłamy żądania na backend, dzięki czemu unikamy niepotrzebnego błędu 401.
+  if (!token) {
+    setUser(null);
+    setIsLoading(false);
+    return;
+  }
 
-    try {
-      // Wywołujemy prawdziwy endpoint profilu z Twojego backendu
-      const response = await fetch('http://localhost:3000/api/users/profile', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`, // Przekazujemy token w nagłówku
-          'Content-Type': 'application/json'
-        }
-      });
+  try {
+    const response = await fetch('http://localhost:3000/api/users/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, //
+        'Content-Type': 'application/json'
+      }
+    });
 
+    // POPRAWKA 2: Sprawdzamy, czy odpowiedź to na pewno JSON (czy status jest OK)
+    // zanim bezwarunkowo wywołamy .json()
+    if (response.ok) {
       const result = await response.json();
-
-      if (response.ok && result.success) {
-        // Backend zwraca dane w obiekcie "data" zgodnie z meta-strukturą z README
+      if (result.success) {
         setUser(result.data); 
       } else {
-        // Token wygasł lub jest niepoprawny
         logout();
       }
-    } catch (error) {
-      console.error("Błąd połączenia z backendem:", error);
+    } else {
+      // Jeśli serwer zwrócił np. 401 "Unauthorized" w formie tekstu:
+      console.warn("Sesja wygasła lub token jest niepoprawny.");
       logout();
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Błąd połączenia z backendem:", error);
+    logout();
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Sprawdź status logowania przy pierwszym uruchomieniu aplikacji
   useEffect(() => {
@@ -72,9 +78,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  setUser(null);
+};
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isLoading, checkAuthStatus }}>

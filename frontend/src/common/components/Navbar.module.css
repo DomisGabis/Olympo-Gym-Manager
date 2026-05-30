@@ -10,10 +10,10 @@
     color: #fff;
 }
 
-.left-section {
+.leftSection {
     display: flex;
-    align-items: left;
-    justify-content: left;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .homeLink {
@@ -35,4 +35,18 @@
 .logoText {
     font-size: 1.5rem;
     font-weight: bold;
+}
+
+.centerSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rightSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }

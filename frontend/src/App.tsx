@@ -3,6 +3,7 @@ import RootLayout from "./common/layouts/RootLayout"
 import AuthLayout from "./common/layouts/AuthLayout"
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./common/components/ProtectedRoute";
+import Login from "./pages/Login";
 
 const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
-      { path: "login", element: <h2>Login</h2> },
+      { path: "login", element: <Login /> },
       { path: "register", element: <h2>Register</h2> },
     ],
   },
