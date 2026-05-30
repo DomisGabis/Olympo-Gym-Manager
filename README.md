@@ -1,6 +1,6 @@
 # Olympo Gym Manager - Backend API
 
-Kompleksowy system ERP/CRM do zarządzania klubem fitness, automatyzacji pracy recepcji, obsługi karnetów oraz prowadzenia cyfrowej współpracy na linii **Trener ↔ Klient**.
+Kompleksowy system ERP/CRM do zarządzania klubem fitness, automatyzacji pracy recepcji, obsługi karnetów oraz prowadzenia cyfrowej współpracy na linii **Trener - Klient**.
 
 Projekt został zbudowany przy użyciu:
 

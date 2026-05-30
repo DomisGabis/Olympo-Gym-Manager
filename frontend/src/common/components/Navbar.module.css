@@ -1,0 +1,38 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    background-color: #333;
+    color: #fff;
+}
+
+.left-section {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+}
+
+.homeLink {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #fff;
+    gap: 0.5rem;
+}
+.homeLink:hover {
+    color: #ddd;
+}
+
+.logo {
+    max-width: 3rem;
+    height: 3rem;
+}
+.logoText {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
