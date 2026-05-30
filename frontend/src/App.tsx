@@ -1,8 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import RootLayout from "./common/layouts/RootLayout"
-import AuthLayout from "./common/layouts/AuthLayout"
+import RootLayout from "./layouts/RootLayout/RootLayout"
+import AuthLayout from "./layouts/AuthLayout"
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./common/components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 
 const router = createBrowserRouter([

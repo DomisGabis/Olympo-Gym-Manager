@@ -25,7 +25,10 @@
     gap: 0.5rem;
 }
 .homeLink:hover {
-    color: #ddd;
+    color: #dbdbdb;
+}
+.homeLink:hover .logo {
+    filter: brightness(0.8);
 }
 
 .logo {
@@ -45,7 +48,6 @@
 
 .rightSection {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;

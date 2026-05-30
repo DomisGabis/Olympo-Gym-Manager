@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "/olympo-logo.png";
 import styles from './Navbar.module.css';
 import { useAuth, type UserRole } from "../../context/AuthContext";
-import Button from "./Button";
+import Button from "../../components/Button/Button";
 
 interface Props {
     role: UserRole;
