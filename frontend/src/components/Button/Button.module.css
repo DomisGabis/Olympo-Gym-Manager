@@ -15,7 +15,7 @@ a {
     width: 100%;
     background: #ffffff;
     color: #000000;
-    border: none;
+    border: 1px solid #ffffff;
     border-radius: 4px;
     padding: 1rem;
     font-size: 1rem;
@@ -30,13 +30,14 @@ a {
 }
 
 .primary:hover:not(:disabled) {
-    background: #ffffff;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
-
+    box-shadow: 0 0 15px #dcad0152;
+    /* background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%); */
+    background: #ffffff00;
+    border-color: #dcac01;
 }
 
 .primary:hover:not(:disabled) .buttonContent {
-    background-image: linear-gradient(90deg, #d7a800 0%, #b18200 100%);
+    background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -70,7 +71,8 @@ a {
 }
 
 .secondary:hover:not(:disabled) {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 15px #dcad0152;
+    border-color: #dcac01;
 
 }
 

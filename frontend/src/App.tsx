@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       { path: "login", element: <LoginPage /> },
-      { path: "register", element: <h2>Register</h2> },
+      { path: "register", element: <RegisterPage /> },
     ],
   },
 ])
