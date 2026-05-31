@@ -1,7 +1,131 @@
+button {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+button:hover {
+    opacity: 1;
+}
+
+a {
+    text-decoration: none;
+}
+
+.primary {
+    width: 100%;
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.primary:hover:not(:disabled) {
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
+
+}
+
+.primary:hover:not(:disabled) .buttonContent {
+    background-image: linear-gradient(90deg, #d7a800 0%, #b18200 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+}
+
+.primary:disabled {
+    background: #222222;
+    color: #555555;
+    border-color: #555555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.secondary {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgb(255, 255, 255);
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.secondary:hover:not(:disabled) {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
+
+}
+
+.secondary:hover:not(:disabled) .buttonContent {
+    background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+}
+
+.secondary:disabled {
+    color: #555555;
+    border-color: #555555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .navbar {
-    background-color: #f4aaaa;
-    padding: 10px 20px;
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.5rem 0.5rem;
+    position: relative;
+}
+
+.navbar:hover {
+    opacity: 1;
+    color: #ffffff;
+}
+
+.navbar::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1.25px;
+    border-radius: 10px;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(90deg, #F0B100, #FFD22A);
+
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease-in-out;
+
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+.navbar:hover::after {
+    transform: scaleX(1);
 }

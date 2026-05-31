@@ -1,18 +1,12 @@
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { useAuth } from '../../context/AuthContext';
 
 function RootLayout() {
-  const { user, logout, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
 
   if (isLoading) return <div>Ładowanie aplikacji...</div>;
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   return (
     <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

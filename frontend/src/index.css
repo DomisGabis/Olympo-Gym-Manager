@@ -1,13 +1,30 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
+  background-color: #0a0a0a;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle at 50% 0%,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 40%,
+      transparent 70%);
 }
 
-:root {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+:root,
+button {
+  font-family: Montserrat, Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: #ffffff;
+}
+
+h1 {
+  font-family: Krona One, Montserrat, Avenir, Helvetica, Arial, sans-serif;
+}
+
+main {
+  padding: 2rem 3rem;
+  color: #ffffff;
 }

@@ -3,24 +3,31 @@ import RootLayout from "./layouts/RootLayout/RootLayout"
 import AuthLayout from "./layouts/AuthLayout"
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Login from "./pages/Login";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import HomePage from "./pages/HomePage/HomePage";
 
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      { path: "/", element: <h2>Home</h2> },
-      { path: "admin", element: (
-    <ProtectedRoute allowedRoles={['ADMIN']}>
-      {/* <AdminDashboard /> */<h2>Admin Panel</h2>}
-    </ProtectedRoute>
-  ) },
+      {
+        path: "/", element: (
+          <HomePage />
+        )
+      },
+      {
+        path: "admin", element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            {/* <AdminDashboard /> */<h2>Admin Panel</h2>}
+          </ProtectedRoute>
+        )
+      },
     ],
   },
   {
     element: <AuthLayout />,
     children: [
-      { path: "login", element: <Login /> },
+      { path: "login", element: <LoginPage /> },
       { path: "register", element: <h2>Register</h2> },
     ],
   },

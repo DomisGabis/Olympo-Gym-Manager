@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiClient } from '../services/apiClient';
 
 export type UserRole = 'CLIENT' | 'TRAINER' | 'RECEPTIONIST' | 'ADMIN' | null;
 
 interface User {
-  id: number;
+  id: string;
   email: string;
   role: UserRole;
   firstName: string;
@@ -24,64 +25,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Funkcja weryfikująca token z backendem
   const checkAuthStatus = async () => {
-  const token = localStorage.getItem('token');
-  
-  // POPRAWKA 1: Jeśli nie ma tokenu, przerywamy funkcję NATYCHMIAST.
-  // Nie wysyłamy żądania na backend, dzięki czemu unikamy niepotrzebnego błędu 401.
-  if (!token) {
-    setUser(null);
-    setIsLoading(false);
-    return;
-  }
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
 
-  try {
-    const response = await fetch('http://localhost:3000/api/users/profile', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`, //
-        'Content-Type': 'application/json'
-      }
-    });
-
-    // POPRAWKA 2: Sprawdzamy, czy odpowiedź to na pewno JSON (czy status jest OK)
-    // zanim bezwarunkowo wywołamy .json()
-    if (response.ok) {
-      const result = await response.json();
-      if (result.success) {
-        setUser(result.data); 
+    try {
+      const response = await apiClient.get('/users/profile');
+      if (response.data.success) {
+        setUser(response.data.data); 
       } else {
         logout();
       }
-    } else {
-      // Jeśli serwer zwrócił np. 401 "Unauthorized" w formie tekstu:
-      console.warn("Sesja wygasła lub token jest niepoprawny.");
+    } catch (error) {
+      console.warn("Sesja wygasła lub błąd połączenia z backendem");
       logout();
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Błąd połączenia z backendem:", error);
-    logout();
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
-  // Sprawdź status logowania przy pierwszym uruchomieniu aplikacji
   useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (savedUser && token) {
+      setUser(JSON.parse(savedUser));
+    }
+    
     checkAuthStatus();
   }, []);
 
   const login = (token: string, userData: User) => {
     localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  setUser(null);
-};
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isLoading, checkAuthStatus }}>

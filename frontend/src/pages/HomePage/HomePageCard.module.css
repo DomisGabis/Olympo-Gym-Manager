@@ -1,0 +1,33 @@
+.card {
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 1.5rem;
+    color: #ffffff;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.clickable {
+    cursor: pointer;
+    text-decoration: none;
+    color: #2c3e50;
+}
+.clickable:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-5px);
+
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15),
+        0 1px 8px rgba(255, 255, 255, 0.2);
+}
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    align-self: flex-start;
+}

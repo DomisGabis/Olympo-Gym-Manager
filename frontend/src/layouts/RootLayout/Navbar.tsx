@@ -17,31 +17,36 @@ function Navbar({ role }: Props) {
     }
     
     return (
-        <nav className={styles.navbar}>
+        <nav>
             <div className={styles.leftSection}>
                 <Link className={styles.homeLink} to="/">
                     <img className={styles.logo} src={logo} alt="Olympo Logo" />
                     <h1 className={styles.logoText}>Olympo</h1>
                 </Link>
+                {role === 'TRAINER' && (
+                    <Button style="navbar" link="/trainer">
+                        Panel Trenera
+                    </Button>
+                )}
+                {role === 'RECEPTIONIST' && (
+                    <Button style="navbar" link="/receptionist">
+                        Panel Recepcjonisty
+                    </Button>
+                )}
+                {role === 'ADMIN' && (
+                    <Button style="navbar" link="/admin">
+                        Panel Administratora
+                    </Button>
+                )}
             </div>
 
             <div className={styles.centerSection}>
             </div>
 
             <div className={styles.rightSection}>
-                {role === 'TRAINER' && (
-                    <Button style="navbar" to="/trainer">
-                        Panel Trenera
-                    </Button>
-                )}
-                {role === 'RECEPTIONIST' && (
-                    <Button style="navbar" to="/receptionist">
-                        Panel Recepcjonisty
-                    </Button>
-                )}
-                {role === 'ADMIN' && (
-                    <Button style="navbar" to="/admin">
-                        Panel Administratora
+                {role !== null && (
+                    <Button style="navbar" link="/profile">
+                        Mój profil
                     </Button>
                 )}
                 {role !== null && (
@@ -50,12 +55,12 @@ function Navbar({ role }: Props) {
                     </Button>
                 )}
                 {role === null && (
-                    <Button style="navbar" to="/login">
+                    <Button style="navbar" link="/login">
                         Zaloguj się
                     </Button>
                 )}
                 {role === null && (
-                    <Button style="navbar" to="/register">
+                    <Button style="navbar" link="/register">
                         Zarejestruj się
                     </Button>
                 )}

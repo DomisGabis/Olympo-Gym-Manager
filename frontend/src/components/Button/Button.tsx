@@ -6,20 +6,25 @@ interface Props {
     type?: 'button' | 'submit' | 'reset';
     children?: React.ReactNode;
     onClick?: () => void;
-    to?: string;
+    link?: string;
+    disabled?: boolean;
 }
     
-function Button({ type, children, onClick, style, to }: Props) {
+function Button({ type, children, onClick, style, link: to, disabled }: Props) {
     return (
         to ? (
             <Link to={to}>
-                <button type={type} onClick={onClick} className={style ? styles[style] : 'primary'}>
-                    {children}
+                <button type={type} onClick={onClick} className={style ? styles[style] : 'primary'} disabled={disabled}>
+                    <span className={styles.buttonContent}>
+                        {children}
+                    </span>
                 </button>
             </Link>
         ) : (
-            <button type={type} onClick={onClick} className={style ? styles[style] : 'primary'}>
-                {children}
+            <button type={type} onClick={onClick} className={style ? styles[style] : 'primary'} disabled={disabled}>
+                <span className={styles.buttonContent}>
+                    {children}
+                </span>
             </button>
         )
     )
