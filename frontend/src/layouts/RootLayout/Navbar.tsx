@@ -54,8 +54,18 @@ function Navbar({ role }: Props) {
                     </Button>
                 )}
                 {role === 'ADMIN' && (
-                    <Button style="navbar" link="/admin">
-                        Panel Administratora
+                    <Button style="navbar" link="/manage-users">
+                        Użytkownicy
+                    </Button>
+                )}
+                {role === 'ADMIN' && (
+                    <Button style="navbar" link="/manage-offer">
+                        Oferta
+                    </Button>
+                )}
+                {role === 'ADMIN' && (
+                    <Button style="navbar" link="/manage-exercises">
+                        Ćwiczenia
                     </Button>
                 )}
             </div>

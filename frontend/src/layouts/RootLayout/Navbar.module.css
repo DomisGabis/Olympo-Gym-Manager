@@ -42,7 +42,7 @@ nav {
     border-radius: 10px;
     bottom: 0;
     left: 0;
-    background: linear-gradient(90deg, #F0B100, #FFD22A);
+    background: linear-gradient(90deg, #ffd12a2f, #F0B100, #ffd12a2f);
 
     transform: scaleX(0);
     transform-origin: center;

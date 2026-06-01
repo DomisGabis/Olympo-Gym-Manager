@@ -52,6 +52,9 @@ function ProfilePage() {
                     <ProfileDataSection title="Email" onEdit={() => handleOpenEdit('email', 'Email', user.email)}>
                         {user.email}
                     </ProfileDataSection>
+                    <ProfileDataSection title="Hasło" onEdit={() => handleOpenEdit('password', 'Hasło', '')}>
+                        ********
+                    </ProfileDataSection>
                     <ProfileDataSection title="Rola">
                         {user.role}
                     </ProfileDataSection>

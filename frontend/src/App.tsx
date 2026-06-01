@@ -7,6 +7,8 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import TrainingPlansPage from "./pages/TrainingPlansPage/TrainingPlansPage";
+import ManageUsersPage from "./pages/Admin/ManageUsersPage";
 
 const router = createBrowserRouter([
   {
@@ -18,9 +20,30 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "admin", element: (
+        path: "manage-users", element: (
           <ProtectedRoute allowedRoles={['ADMIN']}>
-            {/* <AdminDashboard /> */<h2>Admin Panel</h2>}
+            <ManageUsersPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "manage-offer", element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            {/* <ManageOfferPage /> */ <h1>Panel zarządzania ofertą</h1>}
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "manage-exercises", element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            {/* <ManageExercisesPage /> */ <h1>Panel zarządzania ćwiczeniami</h1>}
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "training-plans", element: (
+          <ProtectedRoute allowedRoles={['CLIENT']}>
+            <TrainingPlansPage />
           </ProtectedRoute>
         )
       },
