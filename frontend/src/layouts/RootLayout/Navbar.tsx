@@ -15,7 +15,7 @@ function Navbar({ role }: Props) {
         logout();
         navigate('/login');
     }
-    
+
     return (
         <nav>
             <div className={styles.leftSection}>
@@ -23,6 +23,26 @@ function Navbar({ role }: Props) {
                     <img className={styles.logo} src={logo} alt="Olympo Logo" />
                     <h1 className={styles.logoText}>Olympo</h1>
                 </Link>
+                {role === 'CLIENT' && (
+                    <Button style="navbar" link="/training-plans">
+                        Plan treningowy
+                    </Button>
+                )}
+                {role === 'CLIENT' && (
+                    <Button style="navbar" link="/trainers">
+                        Trenerzy
+                    </Button>
+                )}
+                {role === 'CLIENT' && (
+                    <Button style="navbar" link="/statistics">
+                        Statystyki
+                    </Button>
+                )}
+                {role === 'CLIENT' && (
+                    <Button style="navbar" link="/notifications">
+                        Powiadomienia
+                    </Button>
+                )}
                 {role === 'TRAINER' && (
                     <Button style="navbar" link="/trainer">
                         Panel Trenera

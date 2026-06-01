@@ -9,7 +9,7 @@ function RootLayout() {
   if (isLoading) return <div>Ładowanie aplikacji...</div>;
 
   return (
-    <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div>
       <Navbar role={user?.role || null} />
       <main>
         <Outlet />

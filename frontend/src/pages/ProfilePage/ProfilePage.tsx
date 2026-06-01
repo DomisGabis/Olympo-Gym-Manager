@@ -39,8 +39,8 @@ function ProfilePage() {
     };
 
     return (
-        <>
-            <div className={styles.container}>
+        <div className={styles.container}>
+            <div className={styles.card}>
                 <h1>Profil użytkownika</h1>
                 <div className={styles.profileData}>
                     <ProfileDataSection title="Imię" onEdit={() => handleOpenEdit('firstName', 'Imię', user.firstName)}>
@@ -86,7 +86,7 @@ function ProfilePage() {
                         </form>
                     </div>
                 </div>
-            )}</>)
+            )}</div>)
 }
 
 export default ProfilePage

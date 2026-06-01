@@ -13,7 +13,7 @@ function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,11 +22,11 @@ function RegisterPage() {
     setSuccess(false);
 
     try {
-      const response = await apiClient.post('/auth/register', { 
-        firstName, 
-        lastName, 
-        email, 
-        password 
+      const response = await apiClient.post('/auth/register', {
+        firstName,
+        lastName,
+        email,
+        password
       });
 
       if (response.data.success) {
@@ -49,73 +49,75 @@ function RegisterPage() {
   };
 
   return (
-    <div className={styles.loginCard}>
-      <img src={logo} className={styles.logo}/>
-      <h1 className={styles.title}>Olympo</h1>
+    <div className={styles.container}>
+      <div className={styles.loginCard}>
+        <img src={logo} className={styles.logo} />
+        <h1 className={styles.title}>Olympo</h1>
 
-      {error && <div className={styles.errorAlert}>{error}</div>}
-      {success && (
-        <div className={styles.successAlert}>
-          Konto utworzone pomyślnie! Przekierowanie...
-        </div>
-      )}
+        {error && <div className={styles.errorAlert}>{error}</div>}
+        {success && (
+          <div className={styles.successAlert}>
+            Konto utworzone pomyślnie! Przekierowanie...
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.formSection}>
-          <label className={styles.label}>Imię</label>
-          <input
-            type="text"
-            className={`${styles.input} ${error ? styles.inputError : ''}`}
-            placeholder="Imię"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formSection}>
+            <label className={styles.label}>Imię</label>
+            <input
+              type="text"
+              className={`${styles.input} ${error ? styles.inputError : ''}`}
+              placeholder="Imię"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className={styles.formSection}>
-          <label className={styles.label}>Nazwisko</label>
-          <input
-            type="text"
-            className={`${styles.input} ${error ? styles.inputError : ''}`}
-            placeholder="Nazwisko"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
+          <div className={styles.formSection}>
+            <label className={styles.label}>Nazwisko</label>
+            <input
+              type="text"
+              className={`${styles.input} ${error ? styles.inputError : ''}`}
+              placeholder="Nazwisko"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className={styles.formSection}>
-          <label className={styles.label}>Email</label>
-          <input
-            type="email"
-            className={`${styles.input} ${error ? styles.inputError : ''}`}
-            placeholder="client@olympo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+          <div className={styles.formSection}>
+            <label className={styles.label}>Email</label>
+            <input
+              type="email"
+              className={`${styles.input} ${error ? styles.inputError : ''}`}
+              placeholder="client@olympo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className={styles.formSection}>
-          <label className={styles.label}>Hasło</label>
-          <input
-            type="password"
-            className={`${styles.input} ${error ? styles.inputError : ''}`}
-            placeholder="********"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+          <div className={styles.formSection}>
+            <label className={styles.label}>Hasło</label>
+            <input
+              type="password"
+              className={`${styles.input} ${error ? styles.inputError : ''}`}
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <Button type="submit" style="primary">
-          Zarejestruj się
-        </Button>
-        <Button style="secondary" link="/login">
-          Masz już konto? Zaloguj się
-        </Button>
-      </form>
+          <Button type="submit" style="primary">
+            Zarejestruj się
+          </Button>
+          <Button style="secondary" link="/login">
+            Masz już konto? Zaloguj się
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

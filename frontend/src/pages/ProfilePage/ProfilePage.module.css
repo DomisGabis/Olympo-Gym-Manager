@@ -1,9 +1,12 @@
-main {
-    align-items: flex-start;
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     min-height: auto;
+    width: 100%;
 }
 
-.container {
+.card {
     display: flex;
     flex-direction: column;
     justify-content: center;
