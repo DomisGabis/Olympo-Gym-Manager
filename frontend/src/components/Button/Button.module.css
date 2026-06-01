@@ -15,7 +15,8 @@ a {
     width: 100%;
     background: #ffffff;
     color: #000000;
-    border: 1px solid #ffffff;
+    /* border: 1px solid #ffffff; */
+    border: none;
     border-radius: 4px;
     padding: 1rem;
     font-size: 1rem;
@@ -30,17 +31,20 @@ a {
 }
 
 .primary:hover:not(:disabled) {
-    box-shadow: 0 0 15px #dcad0152;
-    /* background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%); */
-    background: #ffffff00;
-    border-color: #dcac01;
+    box-shadow: 0 0 15px #dcad01af;
+    /* background-image: radial-gradient(circle, #ffffff 80%, #dcac01 100%); */
+    /* background: #ffffff00;
+    border-color: #dcac01; */
+    /* background: #dcac01; */
+    color: #dcac01;
 }
 
 .primary:hover:not(:disabled) .buttonContent {
-    background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%);
-    -webkit-background-clip: text;
+    /* background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%); */
+    /* background-image: linear-gradient(90deg, #F0B100, #ab890d); */
+    /* -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: transparent; */
 
 }
 
@@ -73,16 +77,15 @@ a {
 .secondary:hover:not(:disabled) {
     box-shadow: 0 0 15px #dcad0152;
     border-color: #dcac01;
-
 }
 
-.secondary:hover:not(:disabled) .buttonContent {
+/* .secondary:hover:not(:disabled) .buttonContent {
     background-image: linear-gradient(90deg, #ffffff 0%, #dcac01 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 
-}
+} */
 
 .secondary:disabled {
     color: #555555;

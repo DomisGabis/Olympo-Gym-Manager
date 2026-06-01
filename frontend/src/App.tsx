@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,13 @@ const router = createBrowserRouter([
         path: "admin", element: (
           <ProtectedRoute allowedRoles={['ADMIN']}>
             {/* <AdminDashboard /> */<h2>Admin Panel</h2>}
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "profile", element: (
+          <ProtectedRoute allowedRoles={['ADMIN', 'TRAINER', 'CLIENT', 'RECEPTIONIST']}>
+            {<ProfilePage />}
           </ProtectedRoute>
         )
       },
