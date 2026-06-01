@@ -6,10 +6,10 @@ import { authorizeRoles } from '../auth/role.middleware';
 const router = Router();
 const membershipsController = new MembershipsController();
 
-router.get('/types', membershipsController.getTypes);
+router.get('/', membershipsController.getTypes);
 
 router.post(
-  '/buy', 
+  '/', 
   passport.authenticate('jwt', { session: false }), 
   authorizeRoles('CLIENT'), 
   membershipsController.buy

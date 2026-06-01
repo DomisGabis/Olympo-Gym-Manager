@@ -30,10 +30,10 @@ export class MessagesController {
   async getHistory(req: Request, res: Response) {
     try {
       const userPayload = req.user as any;
-      const contactId = req.params.contactId as string;
+      const userId = req.params.userId as string;
 
-      if (!contactId) {
-        return res.status(400).json({ success: false, message: 'Wymagane jest ID kontaktu w adresie URL.' });
+      if (!userId) {
+        return res.status(400).json({ success: false, message: 'Wymagane jest ID użytkownika w adresie URL.' });
       }
 
       // Pobieramy parametry paginacji (Domyślnie: strona 1, ostatnich 20 wiadomości)
@@ -42,7 +42,7 @@ export class MessagesController {
 
       const result = await messagesService.getConversation(
         userPayload.id, 
-        contactId, 
+        userId, 
         userPayload.role,
         page,
         limit

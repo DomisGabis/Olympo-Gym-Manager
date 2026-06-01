@@ -42,6 +42,21 @@ export class TrainingPlansController {
     }
   }
 
+  // Pobranie planów treningowych dla wskazanego klienta (dla trenera/administratora)
+  async getClientPlansById(req: Request, res: Response) {
+    try {
+      const clientId = req.params.id as string;
+      if (!clientId) {
+        return res.status(400).json({ success: false, message: 'Parametr id klienta jest wymagany w ścieżce URL.' });
+      }
+
+      const plans = await plansService.getClientPlans(clientId);
+      return res.status(200).json({ success: true, data: plans });
+    } catch (error: any) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
   // Klient odznacza ćwiczenie (np. na treningu klika checkbox w aplikacji)
   async toggleEntry(req: Request, res: Response) {
     try {

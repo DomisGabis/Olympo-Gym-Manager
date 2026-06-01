@@ -70,12 +70,4 @@ export class AuthService {
       where: { id }
     });
   }
-
-  async delete(id: string) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new Error('Nie znaleziono użytkownika o podanym ID.');
-    }
-    return this.prisma.user.delete({ where: { id } });
-  }
 }

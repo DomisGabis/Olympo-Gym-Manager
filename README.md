@@ -140,16 +140,26 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 |---|---|---|---|
 | POST | `/api/auth/register` | Publiczny | Rejestracja użytkownika |
 | POST | `/api/auth/login` | Publiczny | Logowanie i JWT |
-| GET | `/api/auth/admin-dashboard` | ADMIN | Test autoryzacji |
-| DELETE | `/api/auth/users/:id` | ADMIN | Kaskadowe usuwanie użytkownika |
+| DELETE | `/api/users/:id` | ADMIN | Kaskadowe usuwanie użytkownika |
 | GET | `/api/users/profile` | Wszyscy zalogowani | Profil użytkownika |
-| GET | `/api/users/trainers` | Wszyscy zalogowani | Lista trenerów |
-| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników |
+| GET | `/api/users/trainers` | ADMIN, RECEPTIONIST | Lista trenerów |
+| GET | `/api/users/clients` | ADMIN, RECEPTIONIST | Lista klientów |
+| GET | `/api/users/receptionists` | ADMIN, RECEPTIONIST | Lista recepcjonistów |
+| GET | `/api/users/admins` | ADMIN, RECEPTIONIST | Lista administratorów |
+| GET | `/api/users/role/:role` | ADMIN, RECEPTIONIST | Lista użytkowników według roli |
+| GET | `/api/users/counts` | ADMIN, RECEPTIONIST | Statystyki: ogólna liczba użytkowników i liczba w każdej roli |
+| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli |
 
 ### Przykład
 
 ```http
 GET /api/users?role=CLIENT&page=1&limit=10
+```
+
+### Przykład roli
+
+```http
+GET /api/users/role/TRAINER?page=1&limit=10
 ```
 
 ---
@@ -193,24 +203,24 @@ Dzięki temu system zapewnia ciągłość członkostwa bez ingerencji recepcji.
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| GET | `/api/memberships/types` | Wszyscy zalogowani | Lista karnetów |
-| POST | `/api/memberships/buy` | CLIENT | Zakup karnetu |
+| GET | `/api/memberships` | Wszyscy zalogowani | Lista karnetów |
+| POST | `/api/memberships` | CLIENT | Zakup karnetu |
 | GET | `/api/memberships/my` | CLIENT | Status aktywnego karnetu |
 
 ---
 
-# 3. Check-In (Rejestracja Wizyt i Obecności)
+# 3. Club Entries (Rejestracja Wizyt i Obecności)
 
 ## Za co odpowiada moduł
 
-Moduł odpowiada za fizyczną kontrolę dostępu do klubu fitness.
+Moduł odpowiada za fizyczną kontrolę dostępu do klubu fitness oraz zarządzanie historią pobytów użytkowników.
 
 System:
-
-- weryfikuje aktywne członkostwo,
-- obsługuje wejścia i wyjścia,
-- blokuje podwójne wejścia,
-- zapisuje historię obecności.
+- weryfikuje posiadanie i ważność aktywnego członkostwa (karnetu),
+- obsługuje rejestrację wejść oraz wyjść z klubu w architekturze REST,
+- blokuje podwójne wejścia (brak możliwości rejestracji wejścia, jeśli klient nie zamknął poprzedniej wizyty),
+- zapisuje precyzyjną historię obecności (czas zameldowania i wymeldowania),
+- umożliwia zalogowanym użytkownikom wgląd we własną historię aktywności z opcją filtrowania po miesiącach.
 
 ---
 
@@ -226,13 +236,13 @@ System:
 
 ## Endpointy
 
-| Metoda | Endpoint | Dostęp | Opis |
+| Metoda | Endpoint | Dostęp | Opis / Parametry |
 |---|---|---|---|
-| POST | `/api/check-in/in` | RECEPTIONIST, ADMIN | Rejestracja wejścia |
-| POST | `/api/check-in/out` | RECEPTIONIST, ADMIN | Rejestracja wyjścia |
+| POST | `/api/club-entries` | RECEPTIONIST, ADMIN | Rejestracja wejścia (Check-in) na podstawie kodu QR przekazanego w Body (`qrCode`). |
+| PATCH | `/api/club-entries` | RECEPTIONIST, ADMIN | Rejestracja wyjścia (Check-out) na podstawie identyfikatora przekazanego w Body (`userId`). |
+| GET | `/api/club-entries/my` | CLIENT, TRAINER, RECEPTIONIST, ADMIN | Pobranie własnej historii wizyt. Opcjonalny parametr w Query Stringu `?month=X` (np. `?month=5` lub `?month=2026-05`). |
 
 ---
-
 # 4. Exercises (Baza Ćwiczeń)
 
 ## Za co odpowiada moduł
@@ -330,7 +340,7 @@ backend automatycznie:
 |---|---|---|---|
 | POST | `/api/training-plans` | TRAINER, ADMIN | Utworzenie planu |
 | GET | `/api/training-plans/my` | CLIENT | Pobranie planów |
-| GET | `/api/training-plans/client/:id` | TRAINER, ADMIN | Podgląd klienta |
+| GET | `/api/clients/:id/training-plans` | TRAINER, ADMIN | Podgląd planów treningowych klienta |
 | PATCH | `/api/training-plans/entries/:id` | CLIENT | Aktualizacja progresu |
 
 ---
@@ -425,7 +435,7 @@ Jeżeli trener i klient nie współpracowali wcześniej:
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
 | POST | `/api/messages` | CLIENT, TRAINER | Wysłanie wiadomości |
-| GET | `/api/messages/:contactId` | CLIENT, TRAINER | Historia wiadomości |
+| GET | `/api/messages/:user-id` | CLIENT, TRAINER | Historia wiadomości |
 
 ### Body Example
 
@@ -435,6 +445,58 @@ Jeżeli trener i klient nie współpracowali wcześniej:
   "content": "Cześć, pamiętaj o treningu nóg."
 }
 ```
+---
+
+# 8. QR Codes (Kody QR i Bezpieczeństwo Wejść)
+
+## Za co odpowiada moduł
+
+Moduł odpowiada za generowanie bezpiecznych, tymczasowych kodów wejściowych dla klubowiczów.
+
+Klient otrzymuje:
+
+- dynamiczny kod QR do wejścia na siłownię,
+- zabezpieczenie przed kradzieżą karnetu (np. poprzez wykonanie zrzutu ekranu),
+- szybką i bezpieczną metodę autoryzacji podczas wejścia do klubu.
+
+---
+
+## Dynamiczne Kody (Bezpieczeństwo)
+
+Zamiast przekazywać statyczny identyfikator użytkownika, system generuje tymczasowy token JWT:
+
+```ts
+jwt.sign(
+  { staticQr, userId },
+  secret,
+  { expiresIn: "1m" }
+);
+````
+
+Backend automatycznie:
+
+* ukrywa oryginalny kod użytkownika wewnątrz tokenu JWT,
+* ustawia czas ważności kodu na 60 sekund,
+* odrzuca wygasłe tokeny podczas skanowania,
+* zabezpiecza system przed ponownym wykorzystaniem starego kodu QR.
+
+Dzięki temu nawet przechwycony lub zapisany obraz kodu QR staje się bezużyteczny po upływie jednej minuty.
+
+---
+
+## Wykorzystywane tabele
+
+| Model Prisma | Tabela SQL |
+| ------------ | ---------- |
+| `User`       | `users`    |
+
+---
+
+## Endpointy
+
+| Metoda | Endpoint                 | Dostęp | Opis                                                     |
+| ------ | ------------------------ | ------ | -------------------------------------------------------- |
+| GET    | `/api/qr-codes` | CLIENT | Generowanie dynamicznego kodu QR ważnego przez 60 sekund |
 
 ---
 

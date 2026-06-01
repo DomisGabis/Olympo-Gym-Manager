@@ -4,11 +4,13 @@ import passport from './modules/auth/passport';
 import authRouter from './modules/auth/auth.routes';
 import usersRouter from './modules/users/users.routes';
 import membershipRouter from './modules/memberships/memberships.routes';
-import checkInRouter from './modules/check-in/check-in.routes';
+import clubEntryRoutes from './modules/club-entry/club-entry.routes';
 import trainingPlansRouter from './modules/training-plans/training-plans.routes';
+import clientsRouter from './modules/clients/clients.routes';
 import exercisesRouter from './modules/exercises/exercises.routes';
 import calendarRouter from './modules/calendar/calendar.routes';
 import messagesRouter from './modules/messages/messages.routes';
+import qrCodesRoutes from './modules/qr-codes/qr-codes.routes';
 
 const app: Application = express();
 
@@ -19,12 +21,14 @@ app.use(passport.initialize());
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/clients', clientsRouter);
 app.use('/api/memberships', membershipRouter);
-app.use('/api/check-in', checkInRouter);
+app.use('/api/club-entries', clubEntryRoutes);
 app.use('/api/training-plans', trainingPlansRouter);
 app.use('/api/exercises', exercisesRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/qr-codes', qrCodesRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'Olympo API works fine!' });

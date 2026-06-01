@@ -60,8 +60,41 @@ export class UsersService {
     return user;
   }
 
+  async delete(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new Error('Nie znaleziono użytkownika o podanym ID.');
+    }
+
+    await this.prisma.user.delete({ where: { id } });
+    return;
+  }
+
   // Wykorzystujemy elastyczność metody getAll do pobrania samych trenerów
   async getTrainers(page: number, limit: number) {
     return this.getAll(page, limit, Role.TRAINER);
+  }
+
+  /**
+   * Zwraca liczby użytkowników: ogółem oraz rozbite po rolach
+   */
+  async getCounts() {
+    const [overall, clients, trainers, receptionists, admins] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.user.count({ where: { role: Role.CLIENT } }),
+      this.prisma.user.count({ where: { role: Role.TRAINER } }),
+      this.prisma.user.count({ where: { role: Role.RECEPTIONIST } }),
+      this.prisma.user.count({ where: { role: Role.ADMIN } }),
+    ]);
+
+    return {
+      overall,
+      byRole: {
+        CLIENT: clients,
+        TRAINER: trainers,
+        RECEPTIONIST: receptionists,
+        ADMIN: admins,
+      }
+    };
   }
 }

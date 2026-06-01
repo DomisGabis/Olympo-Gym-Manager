@@ -29,17 +29,4 @@ export class AuthController {
       return res.status(401).json({ success: false, message: error.message });
     }
   }
-
-  async delete(req: Request, res: Response, next: NextFunction) {
-    try {
-      const id = req.params.id as string;
-      await authService.delete(id);
-      return res.status(200).json({
-        success: true,
-        message: 'Użytkownik oraz wszystkie jego powiązane dane zostały pomyślnie usunięte z systemu.'
-      });
-    } catch (error: any) {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-  }
 }
