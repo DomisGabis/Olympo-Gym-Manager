@@ -11,23 +11,32 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 350px;
 }
 
 .clickable {
     cursor: pointer;
     text-decoration: none;
-    color: #2c3e50;
 }
-.clickable:hover {
+/* .clickable:hover {
     border-color: rgba(255, 255, 255, 0.6);
     transform: translateY(-5px);
 
     box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15),
         0 1px 8px rgba(255, 255, 255, 0.2);
-}
+} */
 .card h2 {
     margin-top: 0;
     margin-bottom: 0.5rem;
     font-size: 1rem;
     align-self: flex-start;
 }
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+

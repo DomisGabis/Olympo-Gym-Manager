@@ -65,13 +65,12 @@ function ManageUsersPage() {
     <div className={styles.pageWrapper}>
       <div className={styles.headerSection}>
         <div>
-          <h1 className={styles.mainTitle}>Zarządzanie Rolami</h1>
+          <h1 className='pageTitle'>Zarządzanie Rolami</h1>
           <p className={styles.subtitle}>Zarządzaj użytkownikami i ich uprawnieniami systemowymi</p>
         </div>
         <Button className={styles.addUserBtn} style="primary">+ Dodaj użytkownika</Button>
       </div>
 
-      {/* Karty podsumowujące (Statystyki ról) */}
       <div className={styles.statsGrid}>
         {[
           { label: 'Administrator', count: stats.ADMIN, role: 'ADMIN', color: '#dc3545' },
@@ -95,7 +94,6 @@ function ManageUsersPage() {
         ))}
       </div>
 
-      {/* Sekcja filtrów i wyszukiwarki */}
       <div className={styles.filterBar}>
         <input 
           type="text" 

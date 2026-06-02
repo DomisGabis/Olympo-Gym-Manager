@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await apiClient.get('/users/profile');
       if (response.data.success) {
         setUser(response.data.data); 
-        console.log(response.data.data);
+        // console.log(response.data.data);
       } else {
         logout();
       }

@@ -3,27 +3,41 @@ import logo from "/olympo-logo.png";
 import styles from './HomePage.module.css';
 import HomePageCard from './HomePageCard';
 import Button from '../../components/Button/Button';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { apiClient } from '../../services/apiClient';
+import QrCodeCard from './QrCodeCard';
 function HomePage() {
     const { user } = useAuth();
     interface QrData {
         qrCodeUrl: string;
-        validUntil: string;
     }
     const [qrData, setQrData] = useState<QrData | null>(null);
     const [isQrLoading, setIsQrLoading] = useState<boolean>(false);
     const [qrError, setQrError] = useState<string | null>(null);
+    const qrTimeoutRef = useRef<number | null>(null);
 
     const handleGenerateQr = async () => {
+        if (qrData) {
+            // Jeśli kod QR już istnieje, nie generuj nowego
+            return;
+        }
         setIsQrLoading(true);
         setQrError(null);
 
         try {
-            const response = await apiClient.post('/check-in/generate-qr');
+            if (qrTimeoutRef.current) {
+                clearTimeout(qrTimeoutRef.current);
+            }
+            const response = await apiClient.get('/qr-codes');
+            // console.log('Odpowiedź z kodem:', response.data);
 
             if (response.data.success) {
-                setQrData(response.data.data);
+                setQrData({ qrCodeUrl: response.data.data.qrString });
+                qrTimeoutRef.current = setTimeout(() => {
+                    setQrData(null);
+                    qrTimeoutRef.current = null;
+                    // console.log("Kod QR wygasł i został usunięty ze stanu.");
+                }, 60 * 1000);
             } else {
                 setQrError('Nie udało się wygenerować kodu. Spróbuj ponownie.');
             }
@@ -33,16 +47,13 @@ function HomePage() {
             setIsQrLoading(false);
         }
     };
-    const formatDateTime = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleString('pl-PL', {
-            hour: '2-digit',
-            minute: '2-digit',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
-    };
+    useEffect(() => {
+        return () => {
+            if (qrTimeoutRef.current) {
+                clearTimeout(qrTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const notSignedInRender = (
         <div className={styles.container}>
@@ -56,31 +67,13 @@ function HomePage() {
             <h1>Witaj w Olympo, {user?.firstName}!</h1>
             <img src={logo} className={styles.logo} />
             <div className={styles.cardsContainer}>
-                <HomePageCard title="Kod QR">
-                    {!qrData ? (
-                        <Button style="primary" onClick={handleGenerateQr} disabled={isQrLoading} >
-                            {isQrLoading ? 'Generowanie...' : 'Wygeneruj kod QR'}
-                        </Button>
-                    ) : (
+                <HomePageCard title="Kod QR" onClick={handleGenerateQr}>
                         <div className={styles.qrResult}>
-                            <div className={styles.qrWrapper}>
-                                <img
-                                    src={qrData.qrCodeUrl}
-                                    alt="Kod QR Wejścia"
-                                    className={styles.qrImage}
-                                />
-                            </div>
-
-                            <div className={styles.infoBox}>
-                                <p className={styles.timerInfo}>
-                                    Kod jest ważny do: <strong>{formatDateTime(qrData.validUntil)}</strong>
-                                </p>
-                                <span className={styles.warningHint}>
-                                    * Użyj kodu przy bramce lub pokaż go na recepcji.
-                                </span>
-                            </div>
+                            <QrCodeCard qrCodeUrl={qrData?.qrCodeUrl || ''} />
                         </div>
-                    )}
+                    <p className={styles.qrDescription}>
+                        Kod QR jest ważny przez 60 sekund<br /> od momentu wygenerowania
+                    </p>
                 </HomePageCard>
                 <HomePageCard title="Wejścia w tym miesiącu">
                 </HomePageCard>

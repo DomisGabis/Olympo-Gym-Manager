@@ -33,3 +33,9 @@ main {
   min-width: auto;
   box-sizing: border-box;
 }
+
+.pageTitle {
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}

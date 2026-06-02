@@ -41,7 +41,7 @@ function ProfilePage() {
     return (
         <div className={styles.container}>
             <div className={styles.card}>
-                <h1>Profil użytkownika</h1>
+                <h1 className='pageTitle'>Profil użytkownika</h1>
                 <div className={styles.profileData}>
                     <ProfileDataSection title="Imię" onEdit={() => handleOpenEdit('firstName', 'Imię', user.firstName)}>
                         {user.firstName}
