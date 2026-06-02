@@ -1,0 +1,142 @@
+.container {
+    height: 100%;
+    width: 100%;
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.entriesCount {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.lastMonthInfo {
+    color: #666666;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+
+.cardContainer {
+    background: rgba(18, 18, 18, 0.2);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cardTitle {
+    color: #ffffff;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0 0 1.5rem 0;
+}
+
+.mainCount {
+    color: #ffffff;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+
+.lastMonthInfo {
+    color: #555555;
+    font-size: 0.85rem;
+}
+
+.lastMonthInfo strong {
+    color: #888888;
+}
+
+/* Kontener wykresu */
+.chartWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+
+.miniChart {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* Kropki na wykresie */
+.chartPoint {
+    fill: #9c7a00;
+    stroke-width: 2px;
+    transition: r 0.2s ease, fill 0.2s ease;
+    cursor: pointer;
+}
+
+.chartPointGroup{
+    gap: 0.5rem;
+    display: flex;
+}
+
+.chartPointGroup:hover .chartPoint {
+    r: 5.5;
+    fill: #dcac01;
+}
+
+.tooltipText {
+    fill: #ffffff;
+    font-size: 9px;
+    font-weight: 600;
+    text-anchor: middle;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.chartPointGroup:hover .tooltipText {
+    opacity: 1;
+}
+
+.chartLabels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 6px;
+}
+
+.axisLabel {
+    color: #333333;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.axisLabel:last-child {
+    color: #666666;
+    font-weight: 600;
+}
+
+/* Nowe style dla podpisów wewnątrz SVG */
+.svgAxisLabel {
+    fill: #333333;
+    font-size: 8px;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    text-anchor: middle; /* KLUCZ: Centruje tekst względem współrzędnej X kropki */
+    user-select: none;
+}
+
+/* Wyróżnienie obecnego miesiąca (np. Czerwiec) */
+.currentMonthText {
+    fill: #666666;
+    font-weight: 600;
+}

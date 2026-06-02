@@ -24,7 +24,6 @@ a {
     text-transform: uppercase;
     letter-spacing: 1.5px;
     cursor: pointer;
-    margin-top: 1rem;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
@@ -76,7 +75,7 @@ a {
 
 .secondary:hover:not(:disabled) {
     box-shadow: 0 0 15px #dcad0152;
-    border-color: #dcac01;
+    border-color: #f7c74d;
 }
 
 /* .secondary:hover:not(:disabled) .buttonContent {

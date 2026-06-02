@@ -1,0 +1,59 @@
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.statusGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 33px;
+}
+
+.statusDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.statusDot.active {
+    background-color: #dcac01;
+    box-shadow: 0 0 8px #dcac01;
+}
+
+.statusDot.expired {
+    background-color: #949494;
+    box-shadow: 0 0 8px #949494;
+}
+
+.infoGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.infoLabel {
+    color: #555555;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.infoValue {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+}

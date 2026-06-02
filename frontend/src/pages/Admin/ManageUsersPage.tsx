@@ -4,8 +4,22 @@ import Button from '../../components/Button/Button';
 import { apiClient } from '../../services/apiClient';
 import type { User } from '../../types/user.types';
 import type { PaginationMeta } from '../../types/common.types';
+import RegisterForm from '../RegisterPage/RegisterForm';
+import Modal from '../../components/Modal/Modal';
+
+interface userCounts {
+  overall: number;
+  byRole: {
+    CLIENT: number;
+    TRAINER: number;
+    RECEPTIONIST: number;
+    ADMIN: number;
+  }
+}
+
 
 function ManageUsersPage() {
+  const [counts, setCounts] = useState<userCounts | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>({ totalItems: 0, totalPages: 1, currentPage: 1, limit: 10 });
   
@@ -14,13 +28,18 @@ function ManageUsersPage() {
   const [sortBy, setSortBy] = useState<string>('lastName');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const stats = {
-    ADMIN: users.filter(u => u.role === 'ADMIN').length,
-    TRAINER: users.filter(u => u.role === 'TRAINER').length,
-    RECEPTIONIST: users.filter(u => u.role === 'RECEPTIONIST').length,
-    CLIENT: users.filter(u => u.role === 'CLIENT').length,
-  };
+  const fetchCounts = async () => {
+    try {
+      const response = await apiClient.get('/users/counts');
+      if (response.data.success) {
+        setCounts(response.data.data);
+      }
+    } catch (error) {
+      console.error('Błąd pobierania liczb użytkowników:', error);
+    }
+  }
 
   const fetchUsers = async () => {
     try {
@@ -39,8 +58,15 @@ function ManageUsersPage() {
   };
 
   useEffect(() => {
+    fetchCounts();
     fetchUsers();
   }, [currentPage, selectedRole, search]);
+
+const handleUserCreated = () => {
+    setIsModalOpen(false);
+    fetchCounts();
+    fetchUsers();
+  };
 
   const toggleSort = (field: string) => {
     if (sortBy === field) {
@@ -68,15 +94,15 @@ function ManageUsersPage() {
           <h1 className='pageTitle'>Zarządzanie Rolami</h1>
           <p className={styles.subtitle}>Zarządzaj użytkownikami i ich uprawnieniami systemowymi</p>
         </div>
-        <Button className={styles.addUserBtn} style="primary">+ Dodaj użytkownika</Button>
+        <Button className={styles.addUserBtn} style="primary" onClick={() => setIsModalOpen(true)}>Dodaj użytkownika</Button>
       </div>
 
       <div className={styles.statsGrid}>
         {[
-          { label: 'Administrator', count: stats.ADMIN, role: 'ADMIN', color: '#dc3545' },
-          { label: 'Trener', count: stats.TRAINER, role: 'TRAINER', color: '#007bff' },
-          { label: 'Recepcja', count: stats.RECEPTIONIST, role: 'RECEPTIONIST', color: '#28a745' },
-          { label: 'Klient', count: stats.CLIENT, role: 'CLIENT', color: '#a020f0' }
+          { label: 'Administrator', count: counts?.byRole.ADMIN, role: 'ADMIN', color: '#dc3545' },
+          { label: 'Trener', count: counts?.byRole.TRAINER, role: 'TRAINER', color: '#007bff' },
+          { label: 'Recepcja', count: counts?.byRole.RECEPTIONIST, role: 'RECEPTIONIST', color: '#28a745' },
+          { label: 'Klient', count: counts?.byRole.CLIENT, role: 'CLIENT', color: '#a020f0' }
         ].map((card) => (
           <div 
             key={card.role} 
@@ -156,7 +182,7 @@ function ManageUsersPage() {
         {/* Paginacja (Offset Pagination Controls) */}
         <div className={styles.paginationBar}>
           <span className={styles.paginationInfo}>
-            Łącznie: <strong>{meta.totalItems}</strong> rekordów
+            Łącznie: <strong>{counts?.overall}</strong> użytkowników
           </span>
           <div className={styles.paginationControls}>
             <button 
@@ -185,6 +211,11 @@ function ManageUsersPage() {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <RegisterForm onSuccess={handleUserCreated} />
+        </Modal>
+      )}
     </div>
   );
 }

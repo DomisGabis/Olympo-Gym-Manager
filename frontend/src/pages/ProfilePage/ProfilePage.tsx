@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import ProfileDataSection from './ProfileDataSection';
 import styles from './ProfilePage.module.css'
 import Button from '../../components/Button/Button';
+import Modal from '../../components/Modal/Modal';
 
 function ProfilePage() {
     const [user, setUser] = useState(useAuth().user);
@@ -65,8 +66,8 @@ function ProfilePage() {
 
             </div>
             {isModalOpen && activeField && (
-                <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
-                    <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+                <Modal onClose={() => setIsModalOpen(false)}>
+                    <div>
                         <h2 className={styles.modalTitle}>Edytuj: {activeField.title}</h2>
 
                         <form onSubmit={handleSave} className={styles.form}>
@@ -88,8 +89,10 @@ function ProfilePage() {
                             </div>
                         </form>
                     </div>
-                </div>
-            )}</div>)
+                </Modal>
+            )}
+        </div>
+    )
 }
 
 export default ProfilePage
