@@ -45,7 +45,6 @@
     background: rgba(255, 255, 255, 0.02);
     border-color: var(--accent-color);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-    transform: translateY(-2px);
 }
 
 .cardHeader {
@@ -94,10 +93,12 @@
     flex: 1;
     background: rgba(30, 30, 30, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: Montserrat, Avenir, Helvetica, Arial, sans-serif;
     border-radius: 4px;
     padding: 0.8rem 1rem;
     color: #ffffff;
     outline: none;
+    max-width: 30rem;
     transition: border-color 0.3s ease;
 }
 

@@ -1,0 +1,15 @@
+.container {
+display: flex;
+flex-direction: column;
+width: 100%;
+gap: 2rem;
+}
+
+.message {
+font-size: 1.1rem;
+}
+
+.buttonSection {
+display: flex;
+gap: 1rem;
+}

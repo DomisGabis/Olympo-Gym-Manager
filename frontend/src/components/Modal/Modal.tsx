@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import styles from './Modal.module.css'
 
 interface Props {
-    onClose?: () => void;
+    onClose: () => void;
     children: ReactNode;
 }
 

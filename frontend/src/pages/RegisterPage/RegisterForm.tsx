@@ -16,14 +16,12 @@ function RegisterForm({ loginButton, onSuccess }: Props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
 
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setSuccess(false);
 
         try {
             const response = await apiClient.post('/auth/register', {
@@ -34,7 +32,6 @@ function RegisterForm({ loginButton, onSuccess }: Props) {
             });
 
             if (response.data.success) {
-                setSuccess(true);
                 if (onSuccess) {
                     onSuccess();
                 }

@@ -67,7 +67,6 @@ a {
     text-transform: uppercase;
     letter-spacing: 1.5px;
     cursor: pointer;
-    margin-top: 1rem;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);

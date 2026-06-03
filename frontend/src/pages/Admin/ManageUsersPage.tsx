@@ -6,6 +6,8 @@ import type { User } from '../../types/user.types';
 import type { PaginationMeta } from '../../types/common.types';
 import RegisterForm from '../RegisterPage/RegisterForm';
 import Modal from '../../components/Modal/Modal';
+import ConfirmationWindow from '../../components/ConfirmationWindow/ConfirmationWindow';
+import EditUserForm from './EditUserForm';
 
 interface userCounts {
   overall: number;
@@ -22,13 +24,16 @@ function ManageUsersPage() {
   const [counts, setCounts] = useState<userCounts | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>({ totalItems: 0, totalPages: 1, currentPage: 1, limit: 10 });
-  
+
   const [search, setSearch] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<string>('lastName');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isAddModal, setIsAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
   const fetchCounts = async () => {
     try {
@@ -46,7 +51,7 @@ function ManageUsersPage() {
       let url = `/users?page=${currentPage}&limit=10`;
       if (selectedRole !== 'ALL') url += `&role=${selectedRole}`;
       if (search) url += `&search=${search}`;
-      
+
       const response = await apiClient.get(url);
       if (response.data.success) {
         setUsers(response.data.data);
@@ -62,10 +67,29 @@ function ManageUsersPage() {
     fetchUsers();
   }, [currentPage, selectedRole, search]);
 
-const handleUserCreated = () => {
-    setIsModalOpen(false);
+  const handleUserCreated = () => {
+    setIsAddModal(false);
     fetchCounts();
     fetchUsers();
+  };
+
+  const handleUserUpdated = () => {
+    setEditingUser(null);
+    fetchUsers();
+  };
+
+  const handleUserDeleted = async () => {
+    if (!deletingUser) return;
+    try {
+      const response = await apiClient.delete(`/users/${deletingUser.id}`);
+      if (response.data.success) {
+        setDeletingUser(null);
+        fetchCounts();
+        fetchUsers();
+      }
+    } catch (error) {
+      console.error('Błąd podczas usuwania użytkownika:', error);
+    }
   };
 
   const toggleSort = (field: string) => {
@@ -80,7 +104,7 @@ const handleUserCreated = () => {
   const sortedUsers = [...users].sort((a, b) => {
     let valA = a[sortBy as keyof User] ?? '';
     let valB = b[sortBy as keyof User] ?? '';
-    
+
     if (typeof valA === 'string') {
       return sortOrder === 'asc' ? valA.localeCompare(valB as string) : (valB as string).localeCompare(valA);
     }
@@ -94,7 +118,7 @@ const handleUserCreated = () => {
           <h1 className='pageTitle'>Zarządzanie Rolami</h1>
           <p className={styles.subtitle}>Zarządzaj użytkownikami i ich uprawnieniami systemowymi</p>
         </div>
-        <Button className={styles.addUserBtn} style="primary" onClick={() => setIsModalOpen(true)}>Dodaj użytkownika</Button>
+        <Button className={styles.addUserBtn} style="primary" onClick={() => setIsAddModal(true)}>Dodaj użytkownika</Button>
       </div>
 
       <div className={styles.statsGrid}>
@@ -104,8 +128,8 @@ const handleUserCreated = () => {
           { label: 'Recepcja', count: counts?.byRole.RECEPTIONIST, role: 'RECEPTIONIST', color: '#28a745' },
           { label: 'Klient', count: counts?.byRole.CLIENT, role: 'CLIENT', color: '#a020f0' }
         ].map((card) => (
-          <div 
-            key={card.role} 
+          <div
+            key={card.role}
             className={`${styles.statCard} ${selectedRole === card.role ? styles.activeCard : ''}`}
             onClick={() => { setSelectedRole(selectedRole === card.role ? 'ALL' : card.role); setCurrentPage(1); }}
             style={{ '--accent-color': card.color } as React.CSSProperties}
@@ -121,9 +145,9 @@ const handleUserCreated = () => {
       </div>
 
       <div className={styles.filterBar}>
-        <input 
-          type="text" 
-          placeholder="Szukaj po imieniu, nazwisku lub emailu..." 
+        <input
+          type="text"
+          placeholder="Szukaj po imieniu, nazwisku lub emailu..."
           className={styles.searchInput}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
@@ -170,8 +194,12 @@ const handleUserCreated = () => {
                 </td>
                 <td>
                   <div className={styles.actionGroup}>
-                    <button className={styles.actionBtn} title="Edytuj">✎</button>
-                    <button className={`${styles.actionBtn} ${styles.deleteBtn}`} title="Usuń">🗑</button>
+                    <button className={styles.actionBtn} title="Edytuj" onClick={() => setEditingUser(user)}>
+                      ✎
+                    </button>
+                    <button className={`${styles.actionBtn} ${styles.deleteBtn}`} title="Usuń" onClick={() => setDeletingUser(user)}>
+                      🗑
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -185,8 +213,8 @@ const handleUserCreated = () => {
             Łącznie: <strong>{counts?.overall}</strong> użytkowników
           </span>
           <div className={styles.paginationControls}>
-            <button 
-              disabled={currentPage === 1} 
+            <button
+              disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               className={styles.pageBtn}
             >
@@ -201,8 +229,8 @@ const handleUserCreated = () => {
                 {page}
               </button>
             ))}
-            <button 
-              disabled={currentPage === meta.totalPages} 
+            <button
+              disabled={currentPage === meta.totalPages}
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, meta.totalPages))}
               className={styles.pageBtn}
             >
@@ -211,9 +239,28 @@ const handleUserCreated = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)}>
+
+      {isAddModal && (
+        <Modal onClose={() => setIsAddModal(false)}>
           <RegisterForm onSuccess={handleUserCreated} />
+        </Modal>
+      )}
+      
+      {editingUser && (
+        <Modal onClose={() => setEditingUser(null)}>
+            <EditUserForm includeHeader user={editingUser} onSave={handleUserUpdated} /> 
+        </Modal>
+      )}
+
+      {/* 3. MODAL: POTWIERDZENIE USUNIĘCIA */}
+      {deletingUser && (
+        <Modal onClose={() => setDeletingUser(null)}>
+          <ConfirmationWindow 
+          onConfirm={handleUserDeleted}
+          onClose={() => setDeletingUser(null)}
+          >
+          Czy na pewno chcesz usunąć użytkownika: <strong>{deletingUser.firstName} {deletingUser.lastName}</strong>? Tej akcji nie można cofnąć.
+          </ConfirmationWindow>
         </Modal>
       )}
     </div>
