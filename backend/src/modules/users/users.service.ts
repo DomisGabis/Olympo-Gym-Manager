@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { PrismaClient, Role } from '@prisma/client';
 
 export class UsersService {
@@ -58,6 +59,38 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async updateProfile(id: string, data: any) {
+    const { email, password, firstName, lastName } = data;
+
+    const updateData: any = {};
+    if (email) updateData.email = email;
+    if (firstName) updateData.firstName = firstName;
+    if (lastName) updateData.lastName = lastName;
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    if (!Object.keys(updateData).length) {
+      throw new Error('Brak danych do aktualizacji.');
+    }
+
+    // Sprawdź czy nowy email jest już zajęty przez innego użytkownika
+    if (email) {
+      const existingUser = await this.prisma.user.findUnique({ where: { email } });
+      if (existingUser && existingUser.id !== id) {
+        throw new Error('Adres e-mail jest już w użyciu.');
+      }
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: updateData,
+      select: this.userSelectWithoutPassword
+    });
+
+    return updatedUser;
   }
 
   async delete(id: string) {

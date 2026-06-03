@@ -142,6 +142,7 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 | POST | `/api/auth/login` | Publiczny | Logowanie i JWT |
 | DELETE | `/api/users/:id` | ADMIN | Kaskadowe usuwanie użytkownika |
 | GET | `/api/users/profile` | Wszyscy zalogowani | Profil użytkownika |
+| PATCH | `/api/users/profile` | Wszyscy zalogowani | Aktualizacja własnego profilu użytkownika |
 | GET | `/api/users/trainers` | ADMIN, RECEPTIONIST | Lista trenerów |
 | GET | `/api/users/clients` | ADMIN, RECEPTIONIST | Lista klientów |
 | GET | `/api/users/receptionists` | ADMIN, RECEPTIONIST | Lista recepcjonistów |

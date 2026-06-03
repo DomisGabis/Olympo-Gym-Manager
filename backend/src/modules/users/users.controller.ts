@@ -15,6 +15,16 @@ export class UsersController {
     }
   }
 
+  async updateProfile(req: Request, res: Response) {
+    try {
+      const userPayload = req.user as any;
+      const updatedUser = await usersService.updateProfile(userPayload.id, req.body);
+      return res.status(200).json({ success: true, message: 'Profil został zaktualizowany.', data: updatedUser });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
   async getTrainers(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string) || 1;
