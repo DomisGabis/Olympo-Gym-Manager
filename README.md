@@ -119,6 +119,7 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 
 - rejestracja użytkowników,
 - logowanie,
+- edycję,
 - JWT Authentication,
 - Role Based Access Control (RBAC),
 - zarządzanie użytkownikami,
@@ -149,12 +150,12 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 | GET | `/api/users/admins` | ADMIN, RECEPTIONIST | Lista administratorów |
 | GET | `/api/users/role/:role` | ADMIN, RECEPTIONIST | Lista użytkowników według roli |
 | GET | `/api/users/counts` | ADMIN, RECEPTIONIST | Statystyki: ogólna liczba użytkowników i liczba w każdej roli |
-| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli |
+| GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli i wyszukiwaniem `search` |
 
-### Przykład
+### Przykład search
 
 ```http
-GET /api/users?role=CLIENT&page=1&limit=10
+GET /api/users?role=CLIENT&search=an&page=1&limit=10
 ```
 
 ### Przykład roli

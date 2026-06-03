@@ -16,12 +16,23 @@ export class UsersService {
     updatedAt: true,
   };
 
-  // Pobiera użytkowników z paginacją i opcjonalnym filtrem roli (np. CLIENT, TRAINER)
-  async getAll(page: number, limit: number, role?: Role) {
+  // Pobiera użytkowników z paginacją oraz opcjonalnymi filtrami: roli i wyszukiwaniem tekstowym
+  async getAll(page: number, limit: number, role?: Role, search?: string) {
     const skip = (page - 1) * limit;
     
     const whereClause: any = {};
     if (role) whereClause.role = role;
+
+    if (search) {
+      const normalizedSearch = search.trim();
+      if (normalizedSearch.length) {
+        whereClause.OR = [
+          { firstName: { contains: normalizedSearch, mode: 'insensitive' } },
+          { lastName: { contains: normalizedSearch, mode: 'insensitive' } },
+          { email: { contains: normalizedSearch, mode: 'insensitive' } }
+        ];
+      }
+    }
 
     // Pobieramy dane oraz łączną liczbę użytkowników spełniających kryteria
     const [data, totalItems] = await Promise.all([
@@ -104,8 +115,8 @@ export class UsersService {
   }
 
   // Wykorzystujemy elastyczność metody getAll do pobrania samych trenerów
-  async getTrainers(page: number, limit: number) {
-    return this.getAll(page, limit, Role.TRAINER);
+  async getTrainers(page: number, limit: number, search?: string) {
+    return this.getAll(page, limit, Role.TRAINER, search);
   }
 
   /**

@@ -29,8 +29,9 @@ export class UsersController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string)?.trim();
 
-      const result = await usersService.getTrainers(page, limit);
+      const result = await usersService.getTrainers(page, limit, search);
       
       return res.status(200).json({ 
         success: true, 
@@ -46,8 +47,9 @@ export class UsersController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string)?.trim();
 
-      const result = await usersService.getAll(page, limit, Role.CLIENT);
+      const result = await usersService.getAll(page, limit, Role.CLIENT, search);
       return res.status(200).json({ success: true, data: result.data, meta: result.meta });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
@@ -58,8 +60,9 @@ export class UsersController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string)?.trim();
 
-      const result = await usersService.getAll(page, limit, Role.RECEPTIONIST);
+      const result = await usersService.getAll(page, limit, Role.RECEPTIONIST, search);
       return res.status(200).json({ success: true, data: result.data, meta: result.meta });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
@@ -70,8 +73,9 @@ export class UsersController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string)?.trim();
 
-      const result = await usersService.getAll(page, limit, Role.ADMIN);
+      const result = await usersService.getAll(page, limit, Role.ADMIN, search);
       return res.status(200).json({ success: true, data: result.data, meta: result.meta });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
@@ -89,8 +93,9 @@ export class UsersController {
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string)?.trim();
 
-      const result = await usersService.getAll(page, limit, roleParam as Role);
+      const result = await usersService.getAll(page, limit, roleParam as Role, search);
       return res.status(200).json({ success: true, data: result.data, meta: result.meta });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
@@ -102,10 +107,12 @@ export class UsersController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       
-      // Pobieramy opcjonalną rolę z Query string (np. ?role=CLIENT lub ?role=TRAINER)
-      const role = req.query.role as Role; 
+      // Pobieramy opcjonalne filtry z Query string:
+      // np. ?role=CLIENT lub ?search=an
+      const role = req.query.role as Role;
+      const search = (req.query.search as string)?.trim();
 
-      const result = await usersService.getAll(page, limit, role);
+      const result = await usersService.getAll(page, limit, role, search);
       
       return res.status(200).json({ 
         success: true, 
