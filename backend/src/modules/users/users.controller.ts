@@ -25,6 +25,19 @@ export class UsersController {
     }
   }
 
+  async updateUserById(req: Request, res: Response) {
+    try {
+      const userId = req.params.id as string;
+      if (!userId) {
+        return res.status(400).json({ success: false, message: 'Parametr id użytkownika jest wymagany.' });
+      }
+      const updatedUser = await usersService.updateProfile(userId, req.body);
+      return res.status(200).json({ success: true, message: 'Profil użytkownika został zaktualizowany.', data: updatedUser });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
   async getTrainers(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string) || 1;

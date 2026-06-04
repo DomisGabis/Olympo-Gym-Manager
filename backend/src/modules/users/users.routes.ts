@@ -21,6 +21,7 @@ router.get('/counts', authorizeRoles('ADMIN', 'RECEPTIONIST'), usersController.g
 // Panel managera/recepcji: pozwala pobierać wszystkich, bądź filtrować:
 // np. GET /api/users?page=1&limit=20&role=CLIENT
 router.get('/', authorizeRoles('ADMIN', 'RECEPTIONIST'), usersController.getAllUsers);
+router.patch('/:id', authorizeRoles('ADMIN'), usersController.updateUserById);
 router.delete('/:id', authorizeRoles('ADMIN'), usersController.delete);
 
 export default router;
