@@ -282,7 +282,7 @@ onDelete: Restrict
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| GET | `/api/exercises` | Wszyscy zalogowani | Lista ćwiczeń |
+| GET | `/api/exercises` | Wszyscy zalogowani | Lista ćwiczeń z paginacją, filtrem po kategorii i wyszukiwaniem `search` |
 | GET | `/api/exercises/:id` | Wszyscy zalogowani | Szczegóły ćwiczenia |
 | POST | `/api/exercises` | TRAINER, ADMIN | Dodanie ćwiczenia |
 | PUT | `/api/exercises/:id` | TRAINER, ADMIN | Edycja ćwiczenia |
@@ -291,7 +291,7 @@ onDelete: Restrict
 ### Przykład
 
 ```http
-GET /api/exercises?category=Nogi&level=INTERMEDIATE
+GET /api/exercises?category=Nogi&search=an&page=1&limit=10
 ```
 
 ---

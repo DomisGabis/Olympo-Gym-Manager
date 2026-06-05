@@ -4,10 +4,20 @@ export class ExercisesService {
   private prisma = new PrismaClient();
 
   // Pobieranie wszystkich z filtrowaniem i PAGINACJĄ (C - Read)
-  async getAll(page: number, limit: number, category?: string, level?: string) {
+  async getAll(page: number, limit: number, category?: string, level?: string, search?: string) {
     const whereClause: any = {};
     if (category) whereClause.category = category;
     if (level) whereClause.level = level;
+
+    if (search) {
+      const normalizedSearch = search.trim();
+      if (normalizedSearch.length) {
+        whereClause.OR = [
+          { name: { contains: normalizedSearch, mode: 'insensitive' } },
+          { description: { contains: normalizedSearch, mode: 'insensitive' } }
+        ];
+      }
+    }
 
     // Przeliczamy ile rekordów pominąć
     const skip = (page - 1) * limit;

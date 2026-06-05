@@ -7,12 +7,13 @@ export class ExercisesController {
   async getAll(req: Request, res: Response) {
     try {
       const { category, level } = req.query;
+      const search = (req.query.search as string)?.trim();
       
       // Wyciągamy parametry paginacji z URL i zamieniamy na liczby
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const result = await exercisesService.getAll(page, limit, category as string, level as string);
+      const result = await exercisesService.getAll(page, limit, category as string, level as string, search);
       
       // Zwracamy strukturę z podziałem na dane i metadane paginacji
       return res.status(200).json({ 

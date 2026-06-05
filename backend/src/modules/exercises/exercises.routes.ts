@@ -7,6 +7,10 @@ const router = Router();
 const controller = new ExercisesController();
 
 // 1. Odczyt: Wszyscy zalogowani użytkownicy (klienci też, bo muszą widzieć katalog)
+//    Obsługiwane query params:
+//      page, limit, category, level, search
+//    Przykład:
+//      GET /api/exercises?category=Nogi&search=an&page=1&limit=10
 router.get(
   '/', 
   passport.authenticate('jwt', { session: false }), 
