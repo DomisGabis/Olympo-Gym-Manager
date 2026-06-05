@@ -73,12 +73,13 @@ export class UsersService {
   }
 
   async updateProfile(id: string, data: any) {
-    const { email, password, firstName, lastName } = data;
+    const { email, password, firstName, lastName, role } = data;
 
     const updateData: any = {};
     if (email) updateData.email = email;
     if (firstName) updateData.firstName = firstName;
     if (lastName) updateData.lastName = lastName;
+    if (role) updateData.role = role;
     if (password) {
       updateData.password = await bcrypt.hash(password, 10);
     }

@@ -84,3 +84,9 @@
     25% { transform: translateX(-6px); }
     75% { transform: translateX(6px); }
 }
+
+.buttonSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

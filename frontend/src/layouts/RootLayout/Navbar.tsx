@@ -43,9 +43,9 @@ function Navbar({ role }: Props) {
                         Powiadomienia
                     </Button>
                 )}
-                {role === 'TRAINER' && (
-                    <Button style="navbar" link="/trainer">
-                        Panel Trenera
+                {(role === 'TRAINER' || role === 'ADMIN') && (
+                    <Button style="navbar" link="/exercises">
+                        Ćwiczenia
                     </Button>
                 )}
                 {role === 'RECEPTIONIST' && (
@@ -58,16 +58,16 @@ function Navbar({ role }: Props) {
                         Użytkownicy
                     </Button>
                 )}
-                {role === 'ADMIN' && (
+                {/* {role === 'ADMIN' && (
                     <Button style="navbar" link="/manage-offer">
                         Oferta
                     </Button>
-                )}
-                {role === 'ADMIN' && (
-                    <Button style="navbar" link="/manage-exercises">
+                )} */}
+                {/* {role === 'ADMIN' && (
+                    <Button style="navbar" link="/exercises">
                         Ćwiczenia
                     </Button>
-                )}
+                )} */}
             </div>
 
             <div className={styles.centerSection}>

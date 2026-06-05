@@ -41,11 +41,16 @@ main {
   letter-spacing: 2px;
 }
 
+.pageSubtitle {
+  color: #666666;
+  font-size: 0.95rem;
+}
+
 hr {
-    width: 100%;
-    height: 1px;
-    /* background: #666666; */
-    /* background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.2)); */
-    background: linear-gradient(90deg, #ffffff19, #666666, #ffffff19);
-    border: none;
+  width: 100%;
+  height: 1px;
+  /* background: #666666; */
+  /* background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.2)); */
+  background: linear-gradient(90deg, #ffffff19, #666666, #ffffff19);
+  border: none;
 }

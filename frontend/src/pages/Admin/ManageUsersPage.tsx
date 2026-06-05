@@ -8,6 +8,7 @@ import RegisterForm from '../RegisterPage/RegisterForm';
 import Modal from '../../components/Modal/Modal';
 import ConfirmationWindow from '../../components/ConfirmationWindow/ConfirmationWindow';
 import EditUserForm from './EditUserForm';
+import { useAuth } from '../../context/AuthContext';
 
 interface userCounts {
   overall: number;
@@ -19,8 +20,8 @@ interface userCounts {
   }
 }
 
-
 function ManageUsersPage() {
+  const { user, checkAuthStatus } = useAuth();
   const [counts, setCounts] = useState<userCounts | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>({ totalItems: 0, totalPages: 1, currentPage: 1, limit: 10 });
@@ -31,7 +32,7 @@ function ManageUsersPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [isAddModal, setIsAddModal] = useState(false);
+  const [addingUser, setAddingUser] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
@@ -68,13 +69,18 @@ function ManageUsersPage() {
   }, [currentPage, selectedRole, search]);
 
   const handleUserCreated = () => {
-    setIsAddModal(false);
+    setAddingUser(false);
     fetchCounts();
     fetchUsers();
   };
 
   const handleUserUpdated = () => {
+
+    if (editingUser?.id === user?.id) {
+      checkAuthStatus();
+    }
     setEditingUser(null);
+    fetchCounts();
     fetchUsers();
   };
 
@@ -116,9 +122,9 @@ function ManageUsersPage() {
       <div className={styles.headerSection}>
         <div>
           <h1 className='pageTitle'>Zarządzanie Rolami</h1>
-          <p className={styles.subtitle}>Zarządzaj użytkownikami i ich uprawnieniami systemowymi</p>
+          <p className='pageSubtitle'>Zarządzaj użytkownikami i ich uprawnieniami systemowymi</p>
         </div>
-        <Button className={styles.addUserBtn} style="primary" onClick={() => setIsAddModal(true)}>Dodaj użytkownika</Button>
+        <Button className={styles.addUserBtn} style="primary" onClick={() => setAddingUser(true)}>Dodaj użytkownika</Button>
       </div>
 
       <div className={styles.statsGrid}>
@@ -169,23 +175,16 @@ function ManageUsersPage() {
         <table className={styles.usersTable}>
           <thead>
             <tr>
-              <th onClick={() => toggleSort('firstName')}>Użytkownik {sortBy === 'firstName' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
-              <th onClick={() => toggleSort('email')}>Email {sortBy === 'email' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
-              <th onClick={() => toggleSort('role')}>Rola {sortBy === 'role' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
-              <th style={{ textAlign: 'right' }}>Akcje</th>
+              <th className={styles.colName} onClick={() => toggleSort('lastName')}>Użytkownik {sortBy === 'lastName' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+              <th className={styles.colEmail} onClick={() => toggleSort('email')}>Email {sortBy === 'email' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+              <th className={styles.colRole} onClick={() => toggleSort('role')}>Rola {sortBy === 'role' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+              <th className={styles.colActions} style={{ textAlign: 'right' }}>Akcje</th>
             </tr>
           </thead>
           <tbody>
             {sortedUsers.map((user) => (
               <tr key={user.id}>
-                <td>
-                  <div className={styles.userIdentity}>
-                    <div className={styles.avatar}>
-                      {user.firstName[0]}{user.lastName[0]}
-                    </div>
-                    <span>{user.firstName} {user.lastName}</span>
-                  </div>
-                </td>
+                <td>{user.lastName} {user.firstName}</td>
                 <td className={styles.emailCell}>{user.email}</td>
                 <td>
                   <span className={`${styles.roleBadge} ${styles[user.role.toLowerCase()]}`}>
@@ -197,6 +196,7 @@ function ManageUsersPage() {
                     <button className={styles.actionBtn} title="Edytuj" onClick={() => setEditingUser(user)}>
                       ✎
                     </button>
+
                     <button className={`${styles.actionBtn} ${styles.deleteBtn}`} title="Usuń" onClick={() => setDeletingUser(user)}>
                       🗑
                     </button>
@@ -240,26 +240,26 @@ function ManageUsersPage() {
         </div>
       </div>
 
-      {isAddModal && (
-        <Modal onClose={() => setIsAddModal(false)}>
+      {addingUser && (
+        <Modal onClose={() => setAddingUser(false)}>
           <RegisterForm onSuccess={handleUserCreated} />
         </Modal>
       )}
-      
+
       {editingUser && (
         <Modal onClose={() => setEditingUser(null)}>
-            <EditUserForm includeHeader user={editingUser} onSave={handleUserUpdated} /> 
+          <EditUserForm includeHeader user={editingUser} onSave={handleUserUpdated} />
         </Modal>
       )}
 
       {/* 3. MODAL: POTWIERDZENIE USUNIĘCIA */}
       {deletingUser && (
         <Modal onClose={() => setDeletingUser(null)}>
-          <ConfirmationWindow 
-          onConfirm={handleUserDeleted}
-          onClose={() => setDeletingUser(null)}
+          <ConfirmationWindow
+            onConfirm={handleUserDeleted}
+            onClose={() => setDeletingUser(null)}
           >
-          Czy na pewno chcesz usunąć użytkownika: <strong>{deletingUser.firstName} {deletingUser.lastName}</strong>? Tej akcji nie można cofnąć.
+            Czy na pewno chcesz usunąć użytkownika: <strong>{deletingUser.firstName} {deletingUser.lastName}</strong>? Tej akcji nie można cofnąć.
           </ConfirmationWindow>
         </Modal>
       )}

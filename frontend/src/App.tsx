@@ -9,6 +9,7 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import TrainingPlansPage from "./pages/TrainingPlansPage/TrainingPlansPage";
 import ManageUsersPage from "./pages/Admin/ManageUsersPage";
+import ExerciseDatabasePage from "./pages/ExerciseDatabasePage/ExerciseDatabasePage";
 
 const router = createBrowserRouter([
   {
@@ -34,9 +35,9 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "manage-exercises", element: (
-          <ProtectedRoute allowedRoles={['ADMIN']}>
-            {/* <ManageExercisesPage /> */ <h1>Panel zarządzania ćwiczeniami</h1>}
+        path: "exercises", element: (
+          <ProtectedRoute allowedRoles={['ADMIN', 'TRAINER']}>
+            <ExerciseDatabasePage />
           </ProtectedRoute>
         )
       },

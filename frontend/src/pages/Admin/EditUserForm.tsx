@@ -37,8 +37,10 @@ function EditUserForm({ user, includeHeader, onSave }: Props) {
             if (password.trim()) {
                 updateData.password = password;
             }
+            // console.log(updateData);
 
-            const response = await apiClient.put(`/users/${user.id}`, updateData);
+            const response = await apiClient.patch(`/users/${user.id}`, updateData);
+            // console.log(response.data);
 
             if (response.data.success) {
                 onSave();
@@ -111,10 +113,10 @@ function EditUserForm({ user, includeHeader, onSave }: Props) {
                         onChange={(e) => setRole(e.target.value as UserRole)}
                         className={styles.selectInput}
                     >
-                        <option value="CLIENT">Klient</option>
-                        <option value="TRAINER">Trener</option>
-                        <option value="RECEPTIONIST">Recepcja</option>
-                        <option value="ADMIN">Administrator</option>
+                        <option value="CLIENT">CLIENT</option>
+                        <option value="TRAINER">TRAINER</option>
+                        <option value="RECEPTIONIST">RECEPTIONIST</option>
+                        <option value="ADMIN">ADMIN</option>
                     </select>
                 </div>
 

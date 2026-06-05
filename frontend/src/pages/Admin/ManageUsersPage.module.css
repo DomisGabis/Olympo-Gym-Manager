@@ -9,18 +9,12 @@
 .headerSection {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 3rem;
 }
 
 .addUserBtn {
     max-width: 300px;
-}
-
-.subtitle {
-    color: #666666;
-    margin: 0;
-    font-size: 0.95rem;
 }
 
 .statsGrid {
@@ -129,6 +123,7 @@
 .usersTable {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     text-align: left;
 }
 
@@ -142,6 +137,22 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     cursor: pointer;
     user-select: none;
+}
+
+.colName {
+    width: 40%;
+}
+
+.colEmail {
+    width: 40%;
+}
+
+.colRole {
+    width: 10%;
+}
+
+.colActions {
+    width: 10%;
 }
 
 .usersTable th:hover {
@@ -208,14 +219,14 @@
 }
 
 .actionBtn {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: none;
+    border: none;
     color: #888888;
-    padding: 0.4rem 0.6rem;
-    border-radius: 4px;
+    font-size: 1.1rem;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
 .actionBtn:hover {

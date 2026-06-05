@@ -102,14 +102,16 @@ function RegisterForm({ loginButton, onSuccess }: Props) {
                     required
                 />
             </div>
+            <div className={styles.buttonSection}>
+                <Button type="submit" style="primary">
+                    Utwórz konto
+                </Button>
+                {loginButton ? <Button style="secondary" link="/login">
+                    Masz już konto? Zaloguj się
+                </Button> : <></>
+                }
+            </div>
 
-            <Button type="submit" style="primary">
-                Utwórz konto
-            </Button>
-            {loginButton ? <Button style="secondary" link="/login">
-                Masz już konto? Zaloguj się
-            </Button> : <></>
-            }
         </form>
     )
 }

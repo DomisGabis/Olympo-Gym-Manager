@@ -1,0 +1,275 @@
+.pageWrapper {
+    /* padding: 2rem;
+    background-color: #121212;
+    min-height: 100vh;
+    color: #ffffff; */
+    width: 100%;
+}
+
+.headerSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.addBtn {
+    max-width: 300px;
+}
+
+/* FILTRY */
+.filterBar {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* padding: 1rem;
+    border-radius: 6px;
+    background: rgba(30, 30, 30, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05); */
+}
+
+.searchContainer {
+    flex: 1;
+}
+
+.searchInput {
+    width: 100%;
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.65rem 1rem;
+    color: white;
+    max-width: 30rem;
+    border-radius: 4px;
+    outline: none;
+}
+
+.searchInput:focus, .selectInput:focus {
+    border-color: rgba(212, 175, 55, 0.5); /* Złoty akcent przy focusie */
+}
+
+.selectsGroup {
+    display: flex;
+    gap: 1rem;
+}
+
+.selectContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.selectLabel {
+    font-size: 0.8rem;
+    color: #666666;
+
+}
+
+.selectInput {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.65rem 2rem 0.65rem 1rem;
+    color: white;
+    font-family: Montserrat;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.selectInput option {
+    background: #1e1e1e;
+}
+
+/* TABELA */
+.tableContainer {
+    width: 100%;
+    background: rgba(30, 30, 30, 0.3);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.exerciseTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Stała szerokość kolumn chroniąca layout */
+}
+
+.exerciseTable th {
+    background: rgba(20, 20, 20, 0.6);
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888888;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.exerciseTable th:hover {
+    color: #ffffff;
+}
+
+.exerciseTable td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    /* verticargb(255, 255, 255): middle; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.exerciseTable tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.colName {
+    width: 50%;
+}
+.colCategory {
+    width: 20%;
+}
+.colLevel {
+    width: 20%;
+}
+.colActions {
+    width: 10%;
+}
+
+/* STRUKTURA ELEMENTÓW */
+.exerciseInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.exerciseName {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.exerciseDesc {
+    font-size: 0.8rem;
+    color: #666666;
+}
+
+.categoryBadge {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tagsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.muscleTag {
+    background: rgba(212, 175, 55, 0.1); /* Delikatnie złote tło dla partii */
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+/* BADGE POZIOMÓW */
+.levelBadge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.levelBadge.początkujący {
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+}
+
+.levelBadge.średni {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+}
+
+.levelBadge.zaawansowany {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+}
+
+.defaultLevel {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* LINKI WIDEO */
+.videoLink {
+    color: #ffc107; /* Złoty kolor odnośnika pasujący do wykresu */
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.videoLink:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.noVideo {
+    color: #444444;
+}
+
+/* GRUPA AKCJI */
+.actionGroup {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.actionBtn {
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.actionBtn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.deleteBtn:hover {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.loading, .noData {
+    text-align: center;
+    padding: 3rem;
+    color: #666666;
+}
+
+.paginationBar {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: #666666;
+}
+
+.paginationControls {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.pageBtn {
+    background-color: #1e1e1e;
+    border: none;
+}
