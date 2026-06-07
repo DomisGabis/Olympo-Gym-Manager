@@ -57,4 +57,20 @@ export class MembershipsController {
       return res.status(500).json({ success: false, message: error.message });
     }
   }
+
+  // ADMIN / RECEPTIONIST: pobierz aktualny karnet wskazanego użytkownika
+  async getMembershipByUserId(req: Request, res: Response) {
+    try {
+      const userId = req.params.id as string;
+      const membership = await membershipsService.getByUserId(userId);
+
+      return res.status(200).json({ 
+        success: true, 
+        data: membership,
+        message: membership ? 'Pobrano aktywny karnet użytkownika.' : 'Użytkownik nie posiada aktywnego karnetu.'
+      });
+    } catch (error: any) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
 }

@@ -153,6 +153,9 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 | GET | `/api/users/counts` | ADMIN, RECEPTIONIST | Statystyki: ogólna liczba użytkowników i liczba w każdej roli |
 | GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli i wyszukiwaniem `search` |
 
+| GET | `/api/relationships` | Wszyscy zalogowani | Zwraca trenerów dla klienta lub klientów dla trenera (dla aktualnie zalogowanego użytkownika) |
+| GET | `/api/relationships/trainer/:id` | ADMIN, RECEPTIONIST | Zwraca listę klientów przypisanych do trenera o podanym id |
+
 ### Przykład search
 
 ```http
@@ -209,6 +212,7 @@ Dzięki temu system zapewnia ciągłość członkostwa bez ingerencji recepcji.
 | GET | `/api/memberships` | Wszyscy zalogowani | Lista karnetów |
 | POST | `/api/memberships` | CLIENT | Zakup karnetu |
 | GET | `/api/memberships/my` | CLIENT | Status aktywnego karnetu |
+| GET | `/api/memberships/user/:id` | ADMIN, RECEPTIONIST | Pobiera aktualny (aktywny) karnet wskazanego użytkownika |
 
 ---
 

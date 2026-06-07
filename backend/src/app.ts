@@ -11,6 +11,7 @@ import exercisesRouter from './modules/exercises/exercises.routes';
 import calendarRouter from './modules/calendar/calendar.routes';
 import messagesRouter from './modules/messages/messages.routes';
 import qrCodesRoutes from './modules/qr-codes/qr-codes.routes';
+import relationshipsRouter from './modules/relationships/relationships.routes';
 
 const app: Application = express();
 
@@ -29,6 +30,7 @@ app.use('/api/exercises', exercisesRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/qr-codes', qrCodesRoutes);
+app.use('/api/relationships', relationshipsRouter);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'Olympo API works fine!' });
