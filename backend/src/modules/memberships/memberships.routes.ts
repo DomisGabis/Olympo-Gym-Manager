@@ -22,4 +22,13 @@ router.get(
   membershipsController.getMyMembership
 );
 
+// GET /api/memberships/user/:id
+// Dla ADMIN i RECEPTIONIST: pobierz aktualny karnet wybranego użytkownika
+router.get(
+  '/user/:id',
+  passport.authenticate('jwt', { session: false }),
+  authorizeRoles('ADMIN', 'RECEPTIONIST'),
+  membershipsController.getMembershipByUserId
+);
+
 export default router;

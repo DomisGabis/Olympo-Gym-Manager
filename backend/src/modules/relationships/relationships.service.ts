@@ -26,4 +26,18 @@ export class RelationshipsService {
     // Dla innych ról zwracamy pustą strukturę
     return { trainers: [], clients: [] };
   }
+
+  // Zwraca klientów przypisanych do danego trenera (używane przez ADMIN)
+  async getClientsForTrainer(trainerId: string) {
+    const relations = await this.prisma.trainerUserRelation.findMany({
+      where: { trainerId },
+      include: {
+        client: {
+          select: { id: true, firstName: true, lastName: true, email: true, role: true }
+        }
+      }
+    });
+
+    return { clients: relations.map(r => r.client) };
+  }
 }
