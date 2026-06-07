@@ -153,6 +153,8 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 | GET | `/api/users/counts` | ADMIN, RECEPTIONIST | Statystyki: ogólna liczba użytkowników i liczba w każdej roli |
 | GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli i wyszukiwaniem `search` |
 
+| GET | `/api/relationships` | Wszyscy zalogowani | Zwraca trenerów dla klienta lub klientów dla trenera (dla aktualnie zalogowanego użytkownika) |
+
 ### Przykład search
 
 ```http
