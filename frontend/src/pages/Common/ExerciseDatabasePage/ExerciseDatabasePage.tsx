@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ExerciseDatabasePage.module.css';
-import Button from '../../components/Button/Button';
-import { apiClient } from '../../services/apiClient';
-import type { Exercise } from '../../types/exercise.type';
-import type { PaginationMeta } from '../../types/common.types';
-import Modal from '../../components/Modal/Modal';
-import ConfirmationWindow from '../../components/ConfirmationWindow/ConfirmationWindow';
+import Button from '../../../components/Button/Button';
+import { apiClient } from '../../../services/apiClient';
+import type { Exercise } from '../../../types/exercise.type';
+import type { PaginationMeta } from '../../../types/common.types';
+import Modal from '../../../components/Modal/Modal';
+import ConfirmationWindow from '../../../components/ConfirmationWindow/ConfirmationWindow';
 import ExerciseForm from './ExerciseForm'
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 interface ExerciseCounts {
   overall: number;

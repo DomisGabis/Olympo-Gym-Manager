@@ -1,8 +1,8 @@
 import styles from './ExerciseForm.module.css';
 import { useState, type FormEvent } from 'react';
-import { apiClient } from '../../services/apiClient';
-import Button from '../../components/Button/Button';
-import type { Exercise, ExerciseCategory, ExerciseDifficultyLevel, MusclePart } from '../../types/exercise.type';
+import { apiClient } from '../../../services/apiClient';
+import Button from '../../../components/Button/Button';
+import type { Exercise, ExerciseCategory, ExerciseDifficultyLevel, MusclePart } from '../../../types/exercise.type';
 
 interface Props {
   exercise?: Exercise;

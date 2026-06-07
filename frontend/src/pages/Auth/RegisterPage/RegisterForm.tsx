@@ -1,7 +1,7 @@
 import axios from 'axios';
-import Button from '../../components/Button/Button'
+import Button from '../../../components/Button/Button'
 import styles from './RegisterForm.module.css'
-import { apiClient } from '../../services/apiClient';
+import { apiClient } from '../../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 

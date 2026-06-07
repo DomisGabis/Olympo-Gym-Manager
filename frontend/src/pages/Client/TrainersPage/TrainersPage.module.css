@@ -1,0 +1,283 @@
+.pageWrapper {
+    width: 100%;
+}
+
+.pageSubtitle {
+    color: #888888;
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+}
+
+.filterBar {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 2.5rem;
+    max-width: 700px;
+}
+
+/* Ciemne inputy i selecty z Twojego formularza */
+.searchInput,
+.selectInput {
+    background: rgba(25, 25, 25, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: #ffffff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.searchInput {
+    flex: 2;
+}
+
+.selectInput {
+    flex: 1;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23888888' d='M0 0l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+.searchInput:focus,
+.selectInput:focus {
+    border-color: #937925;
+    /* Złote podświetlenie aktywnego pola */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+}
+
+.selectInput option {
+    background: #141414;
+    color: #ffffff;
+}
+
+.listsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.sectionBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Wskaźniki sekcji (paski po lewej) zmienione na złoto i szarość z Dark Mode */
+.sectionTitle {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    letter-spacing: -0.5px;
+}
+
+.sectionTitle::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.4rem;
+    border-radius: 2px;
+}
+
+.sectionTitle[data-type="my"]::before {
+    background-color: #d4af37;
+    /* Złoty akcent */
+}
+
+.sectionTitle[data-type="others"]::before {
+    background-color: #444444;
+    /* Neutralny ciemny pasek */
+}
+
+.trainersGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Mroczna, elegancka karta trenera */
+.trainerCard {
+    background: rgba(20, 20, 20, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trainerCard:hover {
+    /* transform: translateY(-3px); */
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(26, 26, 26, 0.9);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Paski dekoracyjne na górze kart dopasowane do ciemnego motywu */
+.trainerCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.trainerCard:hover::before {
+    opacity: 1;
+}
+
+/* Twoi trenerzy dostają złoty/bursztynowy gradient */
+.sectionBlock:first-child .trainerCard::before {
+    background: linear-gradient(to bottom, #d4af37 0%, #f39c12 100%);
+}
+
+/* Pozostali trenerzy dostają mroczny grafitowo-niebieski gradient */
+.sectionBlock:nth-child(2) .trainerCard::before {
+    background: linear-gradient(to bottom, #ffffffc1, rgba(255, 255, 255, 0.077));
+}
+
+.cardMainContent {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.trainerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.trainerName {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+.specialties {
+    font-size: 0.85rem;
+    color: #aaaaaa;
+    margin: 0;
+}
+
+.statsRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.rating {
+    color: #d4af37;
+    /* Złota gwiazdka */
+}
+
+.sessions {
+    color: #666666;
+}
+
+/* Złoty przycisk z ciemnego motywu idealnie domykający dół karty */
+.profileBtn {
+    /* width: 100%;
+    background: linear-gradient(135deg, #d4af37 0%, #aa8416 100%) !important;
+    border: none !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease !important; */
+}
+
+.profileBtn:hover {
+    transform: scale(1.01);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Paginacja w stylu Dark Mode */
+.paginationBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.paginationInfo {
+    font-size: 0.85rem;
+    color: #666666;
+}
+
+.paginationControls {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.pageBtn {
+    background: rgba(25, 25, 25, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #aaaaaa;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.pageBtn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+.activePage {
+    background: #d4af37 !important;
+    color: #000000 !important;
+    border-color: #d4af37 !important;
+    font-weight: 600;
+}
+
+.loader,
+.noResults {
+
+    color: #666666;
+    font-size: 0.95rem;
+}

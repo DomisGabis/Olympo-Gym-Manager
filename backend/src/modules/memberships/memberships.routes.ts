@@ -11,7 +11,7 @@ router.get('/', membershipsController.getTypes);
 router.post(
   '/', 
   passport.authenticate('jwt', { session: false }), 
-  authorizeRoles('CLIENT'), 
+  authorizeRoles('RECEPTIONIST'), 
   membershipsController.buy
 );
 

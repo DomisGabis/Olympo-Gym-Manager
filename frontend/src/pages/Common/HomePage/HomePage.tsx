@@ -1,4 +1,4 @@
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 import logo from "/olympo-logo.png";
 import styles from './HomePage.module.css';
 import QrCodeCard from './QrCodeCard';

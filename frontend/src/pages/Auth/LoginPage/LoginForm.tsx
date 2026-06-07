@@ -1,10 +1,10 @@
 import axios from 'axios';
-import Button from '../../components/Button/Button'
+import Button from '../../../components/Button/Button'
 import styles from './LoginForm.module.css'
-import { apiClient } from '../../services/apiClient';
+import { apiClient } from '../../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 interface Props {
     registerButton?: boolean;

@@ -1,9 +1,9 @@
 import { QRCodeSVG } from 'qrcode.react';
 import styles from './QrCodeCard.module.css';
-import Button from '../../components/Button/Button';
+import Button from '../../../components/Button/Button';
 import HomePageCard from './HomePageCard';
 import { useEffect, useRef, useState } from 'react';
-import { apiClient } from '../../services/apiClient';
+import { apiClient } from '../../../services/apiClient';
 interface QrData {
     qrCodeUrl: string;
 }

@@ -3,13 +3,17 @@ import RootLayout from "./layouts/RootLayout/RootLayout"
 import AuthLayout from "./layouts/AuthLayout"
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import HomePage from "./pages/HomePage/HomePage";
-import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import TrainingPlansPage from "./pages/TrainingPlansPage/TrainingPlansPage";
+import LoginPage from "./pages/Auth/LoginPage/LoginPage";
+import HomePage from "./pages/Common/HomePage/HomePage";
+import RegisterPage from "./pages/Auth/RegisterPage/RegisterPage";
+import ProfilePage from "./pages/Common/ProfilePage/ProfilePage";
+import TrainingPlansPage from "./pages/Client/TrainingPlansPage/TrainingPlansPage";
 import ManageUsersPage from "./pages/Admin/ManageUsersPage";
-import ExerciseDatabasePage from "./pages/ExerciseDatabasePage/ExerciseDatabasePage";
+import ExerciseDatabasePage from "./pages/Common/ExerciseDatabasePage/ExerciseDatabasePage";
+import TrainersPage from "./pages/Client/TrainersPage/TrainersPage";
+import TrainerProfilePage from "./pages/Client/TrainerProfilePage/TrainerProfilePage";
+import TrainerDashboardPage from "./pages/Trainer/TrainerDashboardPage/TrainerDashboardPage";
+import MembershipsPage from "./pages/Receptionist/MembershipsPage/MembershipsPage";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +49,41 @@ const router = createBrowserRouter([
         path: "training-plans", element: (
           <ProtectedRoute allowedRoles={['CLIENT']}>
             <TrainingPlansPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "trainers", element: (
+          <ProtectedRoute allowedRoles={['CLIENT']}>
+            <TrainersPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "trainer/:id", element: (
+          <ProtectedRoute allowedRoles={['CLIENT']}>
+            <TrainerProfilePage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "calendar", element: (
+          <ProtectedRoute allowedRoles={['TRAINER']}>
+            <TrainerProfilePage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "memberships", element: (
+          <ProtectedRoute allowedRoles={['RECEPTIONIST']}>
+            <MembershipsPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "trainer-dashboard", element: (
+          <ProtectedRoute allowedRoles={['TRAINER']}>
+            <TrainerDashboardPage />
           </ProtectedRoute>
         )
       },

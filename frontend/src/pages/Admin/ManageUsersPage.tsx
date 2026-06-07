@@ -4,7 +4,7 @@ import Button from '../../components/Button/Button';
 import { apiClient } from '../../services/apiClient';
 import type { User } from '../../types/user.types';
 import type { PaginationMeta } from '../../types/common.types';
-import RegisterForm from '../RegisterPage/RegisterForm';
+import RegisterForm from '../Auth/RegisterPage/RegisterForm';
 import Modal from '../../components/Modal/Modal';
 import ConfirmationWindow from '../../components/ConfirmationWindow/ConfirmationWindow';
 import EditUserForm from './EditUserForm';

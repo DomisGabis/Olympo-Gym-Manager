@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './EntriesCard.module.css';
 import HomePageCard from './HomePageCard';
-import { apiClient } from '../../services/apiClient';
+import { apiClient } from '../../../services/apiClient';
 
 const HISTORY_MONTHS_COUNT = 5;
 const MONTH_NAMES = [

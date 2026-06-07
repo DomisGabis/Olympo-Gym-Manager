@@ -33,7 +33,7 @@ function Navbar({ role }: Props) {
                         Trenerzy
                     </Button>
                 )}
-                {role === 'CLIENT' && (
+                {/* {role === 'CLIENT' && (
                     <Button style="navbar" link="/statistics">
                         Statystyki
                     </Button>
@@ -42,6 +42,16 @@ function Navbar({ role }: Props) {
                     <Button style="navbar" link="/notifications">
                         Powiadomienia
                     </Button>
+                )} */}
+                {(role === 'TRAINER') && (
+                    <Button style="navbar" link="/calendar">
+                        Kalendarz
+                    </Button>
+                )}
+                {(role === 'TRAINER') && (
+                    <Button style="navbar" link="/trainer-dashboard">
+                        Podopieczni
+                    </Button>
                 )}
                 {(role === 'TRAINER' || role === 'ADMIN') && (
                     <Button style="navbar" link="/exercises">
@@ -49,8 +59,13 @@ function Navbar({ role }: Props) {
                     </Button>
                 )}
                 {role === 'RECEPTIONIST' && (
-                    <Button style="navbar" link="/receptionist">
-                        Panel Recepcjonisty
+                    <Button style="navbar" link="/receptionist-qr">
+                        Kody QR
+                    </Button>
+                )}
+                {role === 'RECEPTIONIST' && (
+                    <Button style="navbar" link="/memberships">
+                        Karnety
                     </Button>
                 )}
                 {role === 'ADMIN' && (

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 import ProfileDataSection from './ProfileDataSection';
 import styles from './ProfilePage.module.css'
-import Button from '../../components/Button/Button';
-import Modal from '../../components/Modal/Modal';
-import { apiClient } from '../../services/apiClient';
+import Button from '../../../components/Button/Button';
+import Modal from '../../../components/Modal/Modal';
+import { apiClient } from '../../../services/apiClient';
 
 function ProfilePage() {
     const { user, checkAuthStatus } = useAuth();

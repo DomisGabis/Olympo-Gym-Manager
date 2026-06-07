@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import HomePageCard from './HomePageCard';
 import styles from './MembershipCard.module.css';
-import type { Membership } from '../../types/membership.types';
-import { apiClient } from '../../services/apiClient';
+import type { Membership } from '../../../types/membership.types';
+import { apiClient } from '../../../services/apiClient';
 
 function MembershipCard() {
     const [membership, setMembership] = useState<Membership | null>(null);
