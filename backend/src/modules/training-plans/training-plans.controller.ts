@@ -57,6 +57,79 @@ export class TrainingPlansController {
     }
   }
 
+  async updatePlan(req: Request, res: Response) {
+    try {
+      const planId = req.params.id as string;
+      const payload = req.body;
+      const userPayload = req.user as any;
+      const plan = await plansService.getPlanWithRelation(planId);
+
+      if (!plan) {
+        return res.status(404).json({ success: false, message: 'Plan treningowy nie istnieje.' });
+      }
+
+      const isClientOwner = userPayload.role === 'CLIENT' && plan.relation.clientId === userPayload.id;
+      const isTrainerOwner = userPayload.role === 'TRAINER' && plan.relation.trainerId === userPayload.id;
+
+      if (!isClientOwner && !isTrainerOwner) {
+        return res.status(403).json({ success: false, message: 'Brak uprawnień do modyfikacji tego planu.' });
+      }
+
+      const updatedPlan = await plansService.updatePlan(planId, payload);
+      return res.status(200).json({ success: true, message: 'Plan treningowy został zaktualizowany.', data: updatedPlan });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
+  async deletePlan(req: Request, res: Response) {
+    try {
+      const planId = req.params.id as string;
+      const userPayload = req.user as any;
+      const plan = await plansService.getPlanWithRelation(planId);
+
+      if (!plan) {
+        return res.status(404).json({ success: false, message: 'Plan treningowy nie istnieje.' });
+      }
+
+      const isClientOwner = userPayload.role === 'CLIENT' && plan.relation.clientId === userPayload.id;
+      const isTrainerOwner = userPayload.role === 'TRAINER' && plan.relation.trainerId === userPayload.id;
+
+      if (!isClientOwner && !isTrainerOwner) {
+        return res.status(403).json({ success: false, message: 'Brak uprawnień do usunięcia tego planu.' });
+      }
+
+      await plansService.deletePlan(planId);
+      return res.status(200).json({ success: true, message: 'Plan treningowy został usunięty.' });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
+  async resetPlanProgress(req: Request, res: Response) {
+    try {
+      const planId = req.params.id as string;
+      const userPayload = req.user as any;
+      const plan = await plansService.getPlanWithRelation(planId);
+
+      if (!plan) {
+        return res.status(404).json({ success: false, message: 'Plan treningowy nie istnieje.' });
+      }
+
+      const isClientOwner = userPayload.role === 'CLIENT' && plan.relation.clientId === userPayload.id;
+      const isTrainerOwner = userPayload.role === 'TRAINER' && plan.relation.trainerId === userPayload.id;
+
+      if (!isClientOwner && !isTrainerOwner) {
+        return res.status(403).json({ success: false, message: 'Brak uprawnień do zresetowania tego planu.' });
+      }
+
+      const updatedPlan = await plansService.resetPlanProgress(planId);
+      return res.status(200).json({ success: true, message: 'Postęp planu został zresetowany.', data: updatedPlan });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
   // Klient odznacza ćwiczenie (np. na treningu klika checkbox w aplikacji)
   async toggleEntry(req: Request, res: Response) {
     try {

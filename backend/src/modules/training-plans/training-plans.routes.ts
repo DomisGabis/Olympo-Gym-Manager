@@ -22,7 +22,31 @@ router.get(
   controller.getMyPlans
 );
 
-// 3. Odznaczanie pojedynczego ćwiczenia z planu (Tylko CLIENT)
+// 3. Aktualizacja planu (CLIENT może edytować własny, TRAINER może edytować plany swoich klientów)
+router.patch(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  authorizeRoles('CLIENT', 'TRAINER'),
+  controller.updatePlan
+);
+
+// 4. Usuwanie planu (CLIENT może usunąć własny, TRAINER może usunąć plany swoich klientów)
+router.delete(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  authorizeRoles('CLIENT', 'TRAINER'),
+  controller.deletePlan
+);
+
+// 5. Resetowanie postępu planu (CLIENT może zresetować swój, TRAINER może zresetować plan klienta)
+router.post(
+  '/:id/reset',
+  passport.authenticate('jwt', { session: false }),
+  authorizeRoles('CLIENT', 'TRAINER'),
+  controller.resetPlanProgress
+);
+
+// 6. Odznaczanie pojedynczego ćwiczenia z planu (Tylko CLIENT)
 router.patch(
   '/entry/:entryId/toggle',
   passport.authenticate('jwt', { session: false }),
