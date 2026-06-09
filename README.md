@@ -345,10 +345,13 @@ backend automatycznie:
 
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
-| POST | `/api/training-plans` | TRAINER, ADMIN | Utworzenie planu |
-| GET | `/api/training-plans/my` | CLIENT | Pobranie planów |
+| POST | `/api/training-plans` | TRAINER | Utworzenie planu dla klienta |
+| GET | `/api/training-plans/my` | CLIENT | Pobranie własnych planów treningowych |
 | GET | `/api/clients/:id/training-plans` | TRAINER, ADMIN | Podgląd planów treningowych klienta |
-| PATCH | `/api/training-plans/entries/:id` | CLIENT | Aktualizacja progresu |
+| PATCH | `/api/training-plans/:id` | CLIENT, TRAINER | Edycja planu treningowego (klient swój plan, trener plan klienta) |
+| DELETE | `/api/training-plans/:id` | CLIENT, TRAINER | Usunięcie planu treningowego (klient lub trener) |
+| POST | `/api/training-plans/:id/reset` | CLIENT, TRAINER | Resetuje postęp planu treningowego, aby można było wykonać go ponownie |
+| PATCH | `/api/training-plans/entry/:entryId/toggle` | CLIENT | Aktualizacja progresu ćwiczenia w planie |
 
 ---
 

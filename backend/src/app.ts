@@ -37,7 +37,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('💥 Global Error Caught:', err.message);
+  console.error('Global Error Caught:', err.message);
   res.status(500).json({ success: false, message: 'Wewnętrzny błąd serwera.' });
 });
 

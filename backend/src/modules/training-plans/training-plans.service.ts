@@ -68,6 +68,73 @@ export class TrainingPlansService {
     });
   }
 
+  async getPlanWithRelation(planId: string) {
+    return this.prisma.trainingPlan.findUnique({
+      where: { id: planId },
+      include: {
+        relation: true,
+        entries: {
+          include: { exercise: true }
+        }
+      }
+    });
+  }
+
+  async updatePlan(planId: string, data: any) {
+    const updateData: any = {};
+    if (data.title) updateData.title = data.title;
+    if (data.startDate) updateData.startDate = new Date(data.startDate);
+    if (data.endDate) updateData.endDate = new Date(data.endDate);
+    if (data.progress !== undefined) updateData.progress = data.progress;
+
+    const entriesUpdate: any = {};
+    if (Array.isArray(data.entries)) {
+      entriesUpdate.deleteMany = {};
+      entriesUpdate.create = data.entries.map((entry: any) => ({
+        exerciseId: entry.exerciseId,
+        dayOfWeek: entry.dayOfWeek,
+        setsCount: entry.setsCount,
+        repsRange: entry.repsRange,
+        weight: entry.weight || null,
+        isCompleted: entry.isCompleted ?? false
+      }));
+    }
+
+    return this.prisma.trainingPlan.update({
+      where: { id: planId },
+      data: {
+        ...updateData,
+        ...(Array.isArray(data.entries) ? { entries: entriesUpdate } : {})
+      },
+      include: {
+        entries: {
+          include: { exercise: true }
+        },
+        relation: {
+          include: {
+            trainer: { select: { firstName: true, lastName: true, email: true } }
+          }
+        }
+      }
+    });
+  }
+
+  async deletePlan(planId: string) {
+    return this.prisma.trainingPlan.delete({ where: { id: planId } });
+  }
+
+  async resetPlanProgress(planId: string) {
+    await this.prisma.planEntry.updateMany({
+      where: { trainingPlanId: planId },
+      data: { isCompleted: false }
+    });
+
+    return this.prisma.trainingPlan.update({
+      where: { id: planId },
+      data: { progress: 0 }
+    });
+  }
+
   /**
    * Odznaczanie ćwiczenia jako wykonane/niewykonane + automatyczne przeliczanie progresu planu
    */

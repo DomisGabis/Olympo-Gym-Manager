@@ -19,8 +19,6 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`[WebSocket]: Nowe połączenie. ID klienta: ${socket.id}`);
 
-  // TODO:logika czatu i powiadomień
-
   socket.on('disconnect', () => {
     console.log(`[WebSocket]: Klient rozłączony. ID: ${socket.id}`);
   });
