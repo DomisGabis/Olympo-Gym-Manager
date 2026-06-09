@@ -152,7 +152,6 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 | GET | `/api/users/role/:role` | ADMIN, RECEPTIONIST | Lista użytkowników według roli |
 | GET | `/api/users/counts` | ADMIN, RECEPTIONIST | Statystyki: ogólna liczba użytkowników i liczba w każdej roli |
 | GET | `/api/users` | ADMIN, RECEPTIONIST | Lista użytkowników z opcjonalnym filtrem roli i wyszukiwaniem `search` |
-
 | GET | `/api/relationships` | Wszyscy zalogowani | Zwraca trenerów dla klienta lub klientów dla trenera (dla aktualnie zalogowanego użytkownika) |
 | GET | `/api/relationships/trainer/:id` | ADMIN, RECEPTIONIST | Zwraca listę klientów przypisanych do trenera o podanym id |
 
