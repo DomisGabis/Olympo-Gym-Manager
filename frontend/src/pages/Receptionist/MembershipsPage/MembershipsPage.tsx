@@ -160,8 +160,8 @@ function MembershipsPage() {
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.headerSection}>
-        <h1 className={styles.pageTitle}>Panel Sprzedaży Karnetów</h1>
-        <p className={styles.pageSubtitle}>Wybierz klienta z listy, aby zarządzać jego członkostwem lub przypisać nowy karnet.</p>
+        <h1 className='pageTitle'>Panel Sprzedaży Karnetów</h1>
+        <p className='pageSubtitle'>Wybierz klienta z listy, aby zarządzać jego członkostwem lub przypisać nowy karnet.</p>
       </div>
 
       <div className={styles.layoutGrid}>
@@ -250,7 +250,7 @@ function MembershipsPage() {
 
               {/* Formularz dodawania nowego karnetu */}
               <div className={styles.formSection}>
-                <h3 className={styles.subSectionTitle}>Dodaj (sprzedaj) nowy karnet</h3>
+                <h3 className={styles.subSectionTitle}>Dodaj nowy karnet</h3>
 
                 {successMessage && <div className={styles.successAlert}>✓ {successMessage}</div>}
                 {error && <div className={styles.errorAlert}>✕ {error}</div>}

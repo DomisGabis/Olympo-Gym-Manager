@@ -43,10 +43,83 @@
     box-shadow: none !important;
 }
 
+/* Sekcja tekstowa tokenu */
+.qrTextSection {
+    height: 3.2rem;
+    width: 100%;
+    max-width: 236px;
+    margin: 1.25rem auto 0 auto;
+    padding: 0 0.5rem 0 0.85rem; /* Zmniejszony prawy padding, by przycisk dobrze leżał */
+    background: rgba(30, 30, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    box-sizing: border-box;
+}
+
+.qrText {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #cccccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.placeholderText {
+    color: #444444;
+    font-size: 0.8rem;
+}
+
+/* Nowy, minimalistyczny przycisk kopiowania */
+.copyBtn {
+    background: none;
+    border: none;
+    color: #666666; /* Dopasowany do koloru nagłówków tabeli */
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+}
+
+.copyBtn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.copyBtnSuccess {
+    color: #71dd8a !important; /* Zielony kolor z Twojego .roleBadge.receptionist */
+    background: rgba(40, 167, 69, 0.08) !important;
+}
+
+/* Kontrola nad rozmiarem wektorowej ikony */
+.icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
 .infoLabel {
     margin-top: 1rem;
     color: #555555;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.qrErrorText {
+    color: #ff6b7a;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    max-width: 236px;
+    margin-left: auto;
+    margin-right: auto;
 }

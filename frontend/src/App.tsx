@@ -17,6 +17,7 @@ import CalendarPage from "./pages/Trainer/CalendarPage/CalendarPage";
 import MembershipsPage from "./pages/Receptionist/MembershipsPage/MembershipsPage";
 import ClientProfilePage from "./pages/Trainer/ClientProfilePage/ClientProfilePage";
 import TrainingPlanDetailsPage from "./pages/Client/TrainingPlanDetailsPage/TrainingPlanDetailsPage";
+import CheckInPage from "./pages/Receptionist/CheckInPage/CheckInPage";
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,13 @@ const router = createBrowserRouter([
         path: "calendar", element: (
           <ProtectedRoute allowedRoles={['TRAINER']}>
             <CalendarPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "check-in", element: (
+          <ProtectedRoute allowedRoles={['RECEPTIONIST']}>
+            <CheckInPage />
           </ProtectedRoute>
         )
       },

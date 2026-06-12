@@ -59,8 +59,8 @@ function Navbar({ role }: Props) {
                     </Button>
                 )}
                 {role === 'RECEPTIONIST' && (
-                    <Button style="navbar" link="/receptionist-qr">
-                        Kody QR
+                    <Button style="navbar" link="/check-in">
+                        Check-in
                     </Button>
                 )}
                 {role === 'RECEPTIONIST' && (
