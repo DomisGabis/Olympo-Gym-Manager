@@ -14,7 +14,7 @@ interface Client {
 }
 
 interface MembershipPlan {
-  id: string;
+  type: string;
   name: string;
   price: number;
   durationDays: number;
@@ -22,9 +22,9 @@ interface MembershipPlan {
 
 interface ActiveMembership {
   id: string;
-  planName: string;
-  validFrom: string;
-  validTo: string;
+  type: string;
+  startDate: string;
+  endDate: string;
   status: 'ACTIVE' | 'EXPIRED';
 }
 
@@ -80,8 +80,9 @@ function MembershipsPage() {
     const fetchPlans = async () => {
       try {
         setLoadingPlans(true);
-        const response = await apiClient.get('/memberships'); // Dostosuj endpoint
+        const response = await apiClient.get('/memberships');
         if (response.data.success) {
+          // console.log(response.data);
           setPlans(response.data.data);
         }
       } catch (err) {
@@ -100,8 +101,9 @@ function MembershipsPage() {
     try {
       setLoadingMemberships(true);
       setSuccessMessage(null);
-      const response = await apiClient.get(`/clients/${clientId}/memberships`);
+      const response = await apiClient.get(`/memberships/user/${clientId}`);
       if (response.data.success) {
+        // console.log(response.data);
         setActiveMemberships(response.data.data);
       }
     } catch (err) {
@@ -127,17 +129,16 @@ function MembershipsPage() {
       setSubmitLoading(true);
       setError(null);
       setSuccessMessage(null);
-
+      // console.log(selectedPlanId);
       const response = await apiClient.post('/memberships', {
         clientId: selectedClient.id,
-        planId: selectedPlanId,
-        startDate: customStartDate,
+        membershipType: selectedPlanId,
+        startingDate: customStartDate,
       });
 
       if (response.data.success) {
         setSuccessMessage('Karnet został pomyślnie aktywowany dla klienta!');
         setSelectedPlanId('');
-        // Odśwież listę aktywnych karnetów klienta
         fetchClientMemberships(selectedClient.id);
       } else {
         setError(response.data.message || 'Wystąpił błąd podczas dodawania karnetu.');
@@ -160,8 +161,8 @@ function MembershipsPage() {
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.headerSection}>
-        <h1 className='pageTitle'>Panel Sprzedaży Karnetów</h1>
-        <p className='pageSubtitle'>Wybierz klienta z listy, aby zarządzać jego członkostwem lub przypisać nowy karnet.</p>
+        <h1 className='pageTitle'>Panel Zarządzania Karnetami</h1>
+        <p className='pageSubtitle'>Wybierz klienta z listy, aby przypisać nowy karnet.</p>
       </div>
 
       <div className={styles.layoutGrid}>
@@ -234,9 +235,9 @@ function MembershipsPage() {
                     {activeMemberships.map((membership) => (
                       <div key={membership.id} className={styles.membershipItem}>
                         <div>
-                          <span className={styles.planBadge}>{membership.planName}</span>
+                          <span className={styles.planBadge}>{membership.type}</span>
                           <div className={styles.membershipDates}>
-                            Ważny od: {new Date(membership.validFrom).toLocaleDateString('pl-PL')} do {new Date(membership.validTo).toLocaleDateString('pl-PL')}
+                            Ważny od: {new Date(membership.startDate).toLocaleDateString('pl-PL')} do {new Date(membership.endDate).toLocaleDateString('pl-PL')}
                           </div>
                         </div>
                         <span className={membership.status === 'ACTIVE' ? styles.statusActive : styles.statusExpired}>
@@ -268,7 +269,7 @@ function MembershipsPage() {
                     >
                       <option value="">-- Wybierz karnet z cennika --</option>
                       {plans.map((plan) => (
-                        <option key={plan.id} value={plan.id}>
+                        <option key={plan.type} value={plan.type}>
                           {plan.name} ({plan.durationDays} dni) — {plan.price} PLN
                         </option>
                       ))}

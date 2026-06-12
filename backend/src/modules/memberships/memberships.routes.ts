@@ -12,7 +12,7 @@ router.post(
   '/', 
   passport.authenticate('jwt', { session: false }), 
   authorizeRoles('RECEPTIONIST'), 
-  membershipsController.buy
+  membershipsController.create
 );
 
 router.get(
@@ -22,13 +22,11 @@ router.get(
   membershipsController.getMyMembership
 );
 
-// GET /api/memberships/user/:id
-// Dla ADMIN i RECEPTIONIST: pobierz aktualny karnet wybranego użytkownika
 router.get(
   '/user/:id',
   passport.authenticate('jwt', { session: false }),
   authorizeRoles('ADMIN', 'RECEPTIONIST'),
-  membershipsController.getMembershipByUserId
+  membershipsController.getMembershipsByUserId
 );
 
 export default router;

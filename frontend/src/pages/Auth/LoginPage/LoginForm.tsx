@@ -52,7 +52,6 @@ function LoginForm({ registerButton, onSuccess }: Props) {
         }
     };
 
-    // <-- NOWA FUNKCJA: Obsługa odpowiedzi SSO z Google -->
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         setError('');
         try {
@@ -62,14 +61,12 @@ function LoginForm({ registerButton, onSuccess }: Props) {
                 return;
             }
 
-            // Wysyłamy token do stworzonego wcześniej endpointu na backendzie
             const response = await apiClient.post('/auth/google', { token: googleToken });
 
             if (response.data.success) {
                 const token = response.data.data.token;
                 const userData = response.data.data.user;
 
-                // Wstrzykujemy dane do Twojego istniejącego AuthContext
                 login(token, userData);
 
                 if (onSuccess) {
@@ -92,7 +89,6 @@ function LoginForm({ registerButton, onSuccess }: Props) {
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
-            {/* Wyświetlanie błędu, jeśli istnieje */}
             {error && <div className={styles.errorAlert}>{error}</div>}
 
             <div className={styles.formSection}>

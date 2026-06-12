@@ -244,8 +244,7 @@ System:
 
 | Metoda | Endpoint | Dostęp | Opis / Parametry |
 |---|---|---|---|
-| POST | `/api/club-entries` | RECEPTIONIST, ADMIN | Rejestracja wejścia (Check-in) na podstawie kodu QR przekazanego w Body (`qrCode`). |
-| PATCH | `/api/club-entries` | RECEPTIONIST, ADMIN | Rejestracja wyjścia (Check-out) na podstawie identyfikatora przekazanego w Body (`userId`). |
+| POST | `/api/club-entries` | RECEPTIONIST, ADMIN | Rejestracja wejścia/wyjścia na podstawie kodu QR przekazanego w Body (`qrCode`). |
 | GET | `/api/club-entries/my` | CLIENT, TRAINER, RECEPTIONIST, ADMIN | Pobranie własnej historii wizyt. Opcjonalny parametr w Query Stringu `?month=X` (np. `?month=5` lub `?month=2026-05`). |
 
 ---

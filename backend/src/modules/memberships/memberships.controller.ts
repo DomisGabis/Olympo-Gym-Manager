@@ -4,8 +4,6 @@ import { MembershipsService } from './memberships.service';
 const membershipsService = new MembershipsService();
 
 export class MembershipsController {
-  // === SEKCJA OBSŁUGI KARNETÓW (KLIENT) ===
-
   async getTypes(req: Request, res: Response) {
     try {
       const types = await membershipsService.getTypes();
@@ -15,23 +13,30 @@ export class MembershipsController {
     }
   }
 
-  async buy(req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     try {
-      const userPayload = req.user as any;
-      const { type } = req.body; 
+      const { clientId, membershipType, startingDate } = req.body; 
 
-      if (!type) {
-        return res.status(400).json({ success: false, message: 'Wymagane jest podanie typu karnetu (type).' });
+      if (!clientId || !membershipType || !startingDate) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Wymagane parametry: clientId, membershipType oraz startingDate.' 
+        });
       }
 
-      const membership = await membershipsService.buyMembership(userPayload.id, type);
+      const membership = await membershipsService.createMembership(clientId, membershipType, startingDate);
       
-      const now = new Date();
-      const isQueued = new Date(membership.startDate) > now;
+      const requestedDate = new Date(startingDate);
+      requestedDate.setHours(0, 0, 0, 0);
       
-      const message = isQueued
-        ? 'Karnet został pomyślnie zakupiony i dodany do kolejki (aktywuje się automatycznie po wygaśnięciu obecnego).'
-        : 'Karnet został pomyślnie zakupiony i aktywowany!';
+      const actualStartDate = new Date(membership.startDate);
+      actualStartDate.setHours(0, 0, 0, 0);
+
+      const isShifted = actualStartDate.getTime() > requestedDate.getTime();
+      
+      const message = isShifted
+        ? `Klient posiada już aktywny karnet w tym okresie. Nowy karnet został automatycznie przesunięty i aktywuje się dnia: ${actualStartDate.toLocaleDateString('pl-PL')}.`
+        : 'Karnet został pomyślnie dodany i aktywowany od wybranej daty!';
 
       return res.status(201).json({
         success: true,
@@ -58,16 +63,15 @@ export class MembershipsController {
     }
   }
 
-  // ADMIN / RECEPTIONIST: pobierz aktualny karnet wskazanego użytkownika
-  async getMembershipByUserId(req: Request, res: Response) {
+  async getMembershipsByUserId(req: Request, res: Response) {
     try {
       const userId = req.params.id as string;
-      const membership = await membershipsService.getByUserId(userId);
+      const memberships = await membershipsService.getByUserId(userId);
 
       return res.status(200).json({ 
         success: true, 
-        data: membership,
-        message: membership ? 'Pobrano aktywny karnet użytkownika.' : 'Użytkownik nie posiada aktywnego karnetu.'
+        data: memberships,
+        message: memberships ? 'Pobrano aktywne karnety użytkownika.' : 'Użytkownik nie posiada aktywnych karnetów.'
       });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });

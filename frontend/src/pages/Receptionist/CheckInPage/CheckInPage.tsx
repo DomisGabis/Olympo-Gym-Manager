@@ -3,36 +3,27 @@ import styles from './CheckInPage.module.css';
 import Button from '../../../components/Button/Button';
 import { apiClient } from '../../../services/apiClient';
 
-type Mode = 'CHECK_IN' | 'CHECK_OUT';
-
 interface AlertState {
   type: 'success' | 'error' | null;
   text: string;
 }
 
 function CheckInPage() {
-  const [mode, setMode] = useState<Mode>('CHECK_IN');
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<AlertState>({ type: null, text: '' });
   
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Automatyczne ustawianie focusu na polu tekstowym dla wygody recepcjonisty
+  // Automatyczne ustawianie focusu na polu tekstowym przy ładowaniu strony
   useEffect(() => {
     focusInput();
-  }, [mode]);
+  }, []);
 
   const focusInput = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  };
-
-  const handleModeChange = (newMode: Mode) => {
-    setMode(newMode);
-    setInputValue('');
-    setAlert({ type: null, text: '' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,31 +34,18 @@ function CheckInPage() {
     setAlert({ type: null, text: '' });
 
     try {
-      if (mode === 'CHECK_IN') {
-        // POST /api/club-entries z { qrCode }
-        const response = await apiClient.post('/club-entries', { qrCode: inputValue.trim() });
-        
-        if (response.data.success) {
-          setAlert({
-            type: 'success',
-            text: `Pomyślnie zarejestrowano WEJŚCIE. Użytkownik: ${response.data.data?.user?.firstName || ''} ${response.data.data?.user?.lastName || ''}`
-          });
-          setInputValue(''); // Czyszczenie pola pod kolejny skan
-        }
-      } else {
-        // PATCH /api/club-entries z { userId }
-        const response = await apiClient.patch('/club-entries', { userId: inputValue.trim() });
-        
-        if (response.data.success) {
-          setAlert({
-            type: 'success',
-            text: `Pomyślnie zarejestrowano WYJŚCIE.`
-          });
-          setInputValue('');
-        }
+      // Wysyłamy zawsze POST z parametrem qrCode
+      const response = await apiClient.post('/club-entries', { qrCode: inputValue.trim() });
+      
+      if (response.data.success) {
+        setAlert({
+          type: 'success',
+          text: response.data.message // Komunikat dynamiczny prosto z backendu (Wejście lub Wyjście)
+        });
+        setInputValue(''); // Czyszczenie pola pod kolejny natychmiastowy skan
       }
     } catch (error: any) {
-      console.error('Błąd rejestracji wpisu:', error);
+      console.error('Błąd rejestracji obecności:', error);
       setAlert({
         type: 'error',
         text: error.response?.data?.message || 'Wystąpił błąd podczas komunikacji z serwerem.'
@@ -75,7 +53,7 @@ function CheckInPage() {
     } finally {
       setLoading(false);
       setInputValue('');
-      // Przywróć focus na pole po zakończeniu żądania, aby recepcjonista mógł od razu skanować dalej
+      // Przywrócenie focusu natychmiast po operacji dla ciągłości skanowania
       setTimeout(focusInput, 50);
     }
   };
@@ -83,33 +61,15 @@ function CheckInPage() {
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.headerSection}>
-        <h1 className="pageTitle">Zarządzanie wejściami do klubu</h1>
-        <p className="pageSubtitle">Zeskanuj kod QR lub wprowadź dane ręcznie, aby zarejestrować obecność</p>
-      </div>
-
-      {/* Przełącznik trybów (Tabs) */}
-      <div className={styles.modeTabs}>
-        <button
-          className={`${styles.tabBtn} ${mode === 'CHECK_IN' ? styles.activeTab : ''}`}
-          onClick={() => handleModeChange('CHECK_IN')}
-          type="button"
-        >
-          ⬇ Wejście (Check-in)
-        </button>
-        <button
-          className={`${styles.tabBtn} ${mode === 'CHECK_OUT' ? styles.activeTab : ''}`}
-          onClick={() => handleModeChange('CHECK_OUT')}
-          type="button"
-        >
-          ⬆ Wyjście (Check-out)
-        </button>
+        <h1 className="pageTitle">Zarządzanie obecnością w klubie</h1>
+        <p className="pageSubtitle">Zeskanuj kod QR użytkownika, aby zarejestrować jego wejście lub wyjście</p>
       </div>
 
       <div className={styles.scannerCard}>
         <form onSubmit={handleSubmit} className={styles.scanForm}>
           <div className={styles.inputGroup}>
             <label htmlFor="scan-input" className={styles.inputLabel}>
-              {mode === 'CHECK_IN' ? 'Kod QR użytkownika:' : 'Identyfikator użytkownika:'}
+              Kod QR użytkownika:
             </label>
             
             <div className={styles.interactiveArea}>
@@ -118,7 +78,7 @@ function CheckInPage() {
                 ref={inputRef}
                 type="text"
                 className={styles.scanInput}
-                placeholder={mode === 'CHECK_IN' ? "Zeskanuj QR lub wpisz kod..." : "Zeskanuj QR lub wpisz ID..."}
+                placeholder="Zeskanuj aktywny kod QR z aplikacji klienta..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 disabled={loading}
@@ -135,20 +95,19 @@ function CheckInPage() {
           </div>
         </form>
 
-        {/* Informacja pomocnicza dla recepcjonisty */}
         <p className={styles.hintText} onClick={focusInput}>
-          Kliknij tutaj, jeśli skaner nie reaguje (pole tekstowe musi być aktywne).
+          Kliknij tutaj, jeśli skaner nie reaguje (pole tekstowe musi być aktywne, by przyjąć sygnał ze skanera).
         </p>
       </div>
 
-      {/* Sekcja komunikatów / Wynik weryfikacji */}
+      {/* Komunikat o sukcesie bądź błędzie */}
       {alert.type && (
         <div className={`${styles.alertBox} ${styles[alert.type]}`}>
           <div className={styles.alertIcon}>
             {alert.type === 'success' ? '✅' : '❌'}
           </div>
           <div className={styles.alertText}>
-            <h3>{alert.type === 'success' ? 'Sukces' : 'Odmowa dostępu / Błąd'}</h3>
+            <h3>{alert.type === 'success' ? 'Status Rejestracji' : 'Odmowa dostępu / Błąd'}</h3>
             <p>{alert.text}</p>
           </div>
         </div>
