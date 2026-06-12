@@ -109,7 +109,7 @@ function CheckInPage() {
         <form onSubmit={handleSubmit} className={styles.scanForm}>
           <div className={styles.inputGroup}>
             <label htmlFor="scan-input" className={styles.inputLabel}>
-              {mode === 'CHECK_IN' ? 'Kod QR użytkownika:' : 'Identyfikator użytkownika (User ID):'}
+              {mode === 'CHECK_IN' ? 'Kod QR użytkownika:' : 'Identyfikator użytkownika:'}
             </label>
             
             <div className={styles.interactiveArea}>
@@ -118,7 +118,7 @@ function CheckInPage() {
                 ref={inputRef}
                 type="text"
                 className={styles.scanInput}
-                placeholder={mode === 'CHECK_IN' ? "Zeskanuj QR lub wpisz kod..." : "Wpisz ID użytkownika..."}
+                placeholder={mode === 'CHECK_IN' ? "Zeskanuj QR lub wpisz kod..." : "Zeskanuj QR lub wpisz ID..."}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 disabled={loading}

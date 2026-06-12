@@ -29,4 +29,22 @@ export class AuthController {
       return res.status(401).json({ success: false, message: error.message });
     }
   }
+
+  async googleLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        return res.status(400).json({ success: false, message: 'Brak tokenu autoryzacji Google.' });
+      }
+
+      const result = await authService.googleLogin(token);
+      return res.status(200).json({
+        success: true,
+        message: 'Zalogowano przez Google pomyślnie!',
+        data: result
+      });
+    } catch (error: any) {
+      return res.status(401).json({ success: false, message: error.message });
+    }
+  }
 }

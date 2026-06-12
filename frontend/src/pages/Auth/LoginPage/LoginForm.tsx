@@ -1,10 +1,13 @@
-import axios from 'axios';
-import Button from '../../../components/Button/Button'
-import styles from './LoginForm.module.css'
+import axios from 'react';
+import axiosInstance from 'axios'; // Jeśli używasz globalnego axios, upewnij się o poprawnym imporcie
+import Button from '../../../components/Button/Button';
+import styles from './LoginForm.module.css';
 import { apiClient } from '../../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
+import type { CredentialResponse } from '@react-oauth/google';
 
 interface Props {
     registerButton?: boolean;
@@ -26,15 +29,13 @@ function LoginForm({ registerButton, onSuccess }: Props) {
             const response = await apiClient.post('/auth/login', { email, password });
 
             if (response.data.success) {
-
                 const token = response.data.data.token;
                 const userData = response.data.data.user;
 
                 login(token, userData);
                 if (onSuccess) {
                     onSuccess();
-                }
-                else {
+                } else {
                     navigate('/');
                 }
             } else {
@@ -42,7 +43,7 @@ function LoginForm({ registerButton, onSuccess }: Props) {
             }
 
         } catch (err: unknown) {
-            if (axios.isAxiosError(err)) {
+            if (axiosInstance.isAxiosError(err)) {
                 const backendMessage = err.response?.data?.message;
                 setError(backendMessage || 'Niepoprawny e-mail lub hasło.');
             } else {
@@ -50,8 +51,50 @@ function LoginForm({ registerButton, onSuccess }: Props) {
             }
         }
     };
+
+    // <-- NOWA FUNKCJA: Obsługa odpowiedzi SSO z Google -->
+    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+        setError('');
+        try {
+            const googleToken = credentialResponse.credential;
+            if (!googleToken) {
+                setError('Nie udało się autoryzować konta przez Google.');
+                return;
+            }
+
+            // Wysyłamy token do stworzonego wcześniej endpointu na backendzie
+            const response = await apiClient.post('/auth/google', { token: googleToken });
+
+            if (response.data.success) {
+                const token = response.data.data.token;
+                const userData = response.data.data.user;
+
+                // Wstrzykujemy dane do Twojego istniejącego AuthContext
+                login(token, userData);
+
+                if (onSuccess) {
+                    onSuccess();
+                } else {
+                    navigate('/');
+                }
+            } else {
+                setError(response.data.message || 'Logowanie przez Google nie powiodło się.');
+            }
+        } catch (err: unknown) {
+            if (axiosInstance.isAxiosError(err)) {
+                const backendMessage = err.response?.data?.message;
+                setError(backendMessage || 'Wystąpił problem podczas autoryzacji Google na serwerze.');
+            } else {
+                setError('Błąd serwera podczas logowania przez Google.');
+            }
+        }
+    };
+
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
+            {/* Wyświetlanie błędu, jeśli istnieje */}
+            {error && <div className={styles.errorAlert}>{error}</div>}
+
             <div className={styles.formSection}>
                 <label className={styles.label}>Email</label>
                 <input
@@ -75,19 +118,35 @@ function LoginForm({ registerButton, onSuccess }: Props) {
                     required
                 />
             </div>
+            
             <div className={styles.buttonSection}>
-                <Button type="submit" style="primary" >
+                <Button type="submit" style="primary">
                     Zaloguj się
                 </Button>
-                {registerButton ?
+                {registerButton ? (
                     <Button style="secondary" link="/register">
                         Przejdź do rejestracji
-                    </Button> :
-                    <></>}
+                    </Button>
+                ) : (
+                    <></>
+                )}
             </div>
 
+            <div className={styles.ssoDivider}>
+                <span>lub zaloguj się przez</span>
+            </div>
+
+            <div className={styles.googleButtonWrapper}>
+                <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => {
+                        setError('Logowanie przez Google zostało przerwane lub wystąpił błąd aplikacji.');
+                    }}
+                    useOneTap
+                />
+            </div>
         </form>
-    )
+    );
 }
 
-export default LoginForm
+export default LoginForm;

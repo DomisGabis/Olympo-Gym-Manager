@@ -9,11 +9,7 @@ import Button from '../../../components/Button/Button';
 import LoginForm from './LoginForm';
 
 function LoginPage() {
-  
-
-
-
-  return (
+    return (
     <div className={styles.container}>
       <div className={styles.loginCard}>
         <img src={logo} className={styles.logo} />
