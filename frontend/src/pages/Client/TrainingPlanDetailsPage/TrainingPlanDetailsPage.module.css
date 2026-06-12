@@ -1,0 +1,255 @@
+.pageWrapper {
+  /* padding: 2.5rem;
+  background-color: #0a0a0a;
+  min-height: 100vh;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box; */
+  width: 100%;
+}
+
+.backHeader {
+  margin-bottom: 1.5rem;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: #888888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+.backBtn:hover {
+  color: #d4af37; /* Złoty akcent przy hoverze */
+}
+
+/* Układ dwukolumnowy */
+.mainLayout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+@media (max-width: 968px) {
+  .mainLayout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* LEWA KOLUMNA - KARTA INFO */
+.infoCard {
+  background: rgba(18, 18, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.planTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+}
+
+.trainerInfo {
+  font-size: 0.9rem;
+  color: #aaaaaa;
+  margin: 0 0 1.5rem 0;
+}
+.trainerInfo strong {
+  color: #ffffff;
+}
+
+.datesBox {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding: 0.85rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #cccccc;
+  margin-bottom: 2rem;
+}
+.datesBox span {
+  color: #666666;
+  font-weight: 600;
+}
+
+/* Sekcja postępu */
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #aaaaaa;
+}
+
+.progressValue {
+  color: #d4af37;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37 0%, #ffea9f 100%);
+  border-radius: 10px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* PRAWA KOLUMNA - LISTA ĆWICZEŃ */
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem 0;
+  color: #ffffff;
+}
+
+.exercisesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Karta Ćwiczenia */
+.exerciseCard {
+  background: rgba(15, 15, 15, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.25s ease;
+}
+
+.completedCard {
+  border-color: rgba(40, 167, 69, 0.2);
+  background: rgba(40, 167, 69, 0.02);
+}
+
+.exerciseInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.exerciseName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  transition: color 0.2s;
+}
+.completedCard .exerciseName {
+  color: #888888;
+  text-decoration: line-through;
+}
+
+.exerciseSpecs {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.specItem {
+  font-size: 0.85rem;
+  color: #888888;
+}
+.specItem strong {
+  color: #dddddd;
+}
+.completedCard .specItem strong {
+  color: #666666;
+}
+
+/* Przycisk aktywacji statusu wykonania */
+.statusToggleBtn {
+  max-width: 200px;
+  font-size: 0.75rem;
+  padding: 0.8rem;
+}
+
+/* .btnPending {
+  
+}
+.btnPending:hover:not(:disabled) {
+  
+}
+
+.btnCompleted {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+.btnCompleted:hover:not(:disabled) {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border-color: rgba(220, 53, 69, 0.2);
+}
+.btnCompleted:hover:not(:disabled)::after {
+  content: "";
+}
+
+.statusToggleBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+} */
+
+/* Stan ładowania / błędy */
+.centerMessage {
+  text-align: center;
+  padding: 4rem;
+  color: #888888;
+  font-size: 0.95rem;
+}
+.errorMessage {
+  color: #dc3545;
+}
+
+.spinner {
+  display: inline-block;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+@media (max-width: 580px) {
+  .exerciseCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .statusToggleBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

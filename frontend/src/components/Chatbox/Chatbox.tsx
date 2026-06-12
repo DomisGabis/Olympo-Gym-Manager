@@ -40,6 +40,7 @@ export function ChatBox({ receiverId, receiverName }: Props) {
       setChatLoading(true);
       setChatPage(1);
       const response = await apiClient.get(`/messages/${receiverId}?page=1&limit=20`);
+      // console.log(response.data);
       if (response.data.success) {
         const fetchedMessages = response.data.data;
         const meta: PaginationMeta = response.data.meta || { totalPages: 1, currentPage: 1 };

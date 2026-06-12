@@ -1,0 +1,305 @@
+.pageWrapper {
+  width: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #ffffff;
+}
+
+.pageHeader p {
+  margin: 0.45rem 0 0 0;
+  color: #c4c4c4;
+}
+
+.pageContent {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 1.5rem;
+}
+
+.calendarSection {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.monthLabel {
+    text-transform: capitalize;
+}
+
+.calendarHeader h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #ffffff;
+}
+
+.calendarControls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.calendarControl {
+    font-size: 0.75rem;
+    width:fit-content;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.dayName {
+  padding: 0.7rem 0.55rem;
+  color: #bfbfbf;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.dayCell {
+  min-height: 140px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow: visible;
+}
+
+.otherMonth {
+  opacity: 0.45;
+}
+
+.todayCell {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.12);
+}
+
+.dayNumber {
+  font-weight: 700;
+  color: #f5f5f5;
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  overflow: hidden;
+  overflow: visible;
+}
+
+.eventItem {
+  display: flex;
+  gap: 0.3rem;
+  align-items: baseline;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  color: #f5f5f5;
+  font-size: 0.82rem;
+  position: relative; /* Wymagane, aby tooltip pozycjonował się względem tego elementu */
+}
+
+/* Ukryty dymek informacyjny */
+.eventTooltip {
+  display: none;
+  position: absolute;
+  bottom: 130%; /* Wyświetla chmurkę tuż nad kafelkiem wydarzenia */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  z-index: 999;
+  min-width: 220px;
+  max-width: 280px;
+  /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); */
+  pointer-events: none; /* Zapobiega miganiu myszki, gdy najeżdżasz na krawędź */
+  font-family: sans-serif;
+  text-align: left;
+}
+
+/* Strzałka pod dymkiem (opcjonalna, ale ładna wizualnie) */
+.eventTooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(20, 20, 20, 0.98) transparent transparent transparent;
+}
+
+/* Pokazanie dymku w momencie najechania myszką na kafelek */
+.eventItem:hover .eventTooltip {
+  display: block;
+}
+
+/* Style wnętrza chmurki */
+.tooltipHeader {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: #d4af37; /* Twój złoty/wyróżniający akcent */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.25rem;
+}
+
+.tooltipBody p {
+  margin: 0.2rem 0;
+  font-size: 0.8rem;
+  color: #dddddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltipBody p span {
+  color: #777777;
+  font-weight: 600;
+}
+
+.eventTime {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.eventTitle {
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreEvents {
+  color: #b0b0b0;
+  font-size: 0.82rem;
+}
+
+.loader,
+.errorMessage {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+}
+
+.loader {
+  background: rgba(255, 255, 255, 0.05);
+  color: #d4d4d4;
+}
+
+.errorMessage {
+  background: rgba(220, 53, 69, 0.08);
+  color: #ffb3b3;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.sidebarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.sidebarHeader h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.sidebarHeader p {
+  margin: 0.4rem 0 0;
+  color: #c4c4c4;
+  font-size: 0.9rem;
+}
+
+.pendingList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pendingCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.pendingMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.pendingTitle {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pendingClient {
+  color: #c4c4c4;
+  font-size: 0.88rem;
+}
+
+.pendingInfo {
+  display: flex;
+  justify-content: space-between;
+  color: #bfc4ca;
+  font-size: 0.9rem;
+}
+
+.pendingActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.emptyState {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: #c4c4c4;
+  border-radius: 12px;
+}
+
+@media (max-width: 1100px) {
+  .pageContent {
+    grid-template-columns: 1fr;
+  }
+}

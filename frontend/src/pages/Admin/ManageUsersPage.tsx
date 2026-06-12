@@ -6,7 +6,6 @@ import type { User } from '../../types/user.types';
 import type { PaginationMeta } from '../../types/common.types';
 import RegisterForm from '../Auth/RegisterPage/RegisterForm';
 import Modal from '../../components/Modal/Modal';
-import ConfirmationWindow from '../../components/ConfirmationWindow/ConfirmationWindow';
 import EditUserForm from './EditUserForm';
 import { useAuth } from '../../context/AuthContext';
 
@@ -34,7 +33,6 @@ function ManageUsersPage() {
 
   const [addingUser, setAddingUser] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
   const fetchCounts = async () => {
     try {
@@ -75,7 +73,6 @@ function ManageUsersPage() {
   };
 
   const handleUserUpdated = () => {
-
     if (editingUser?.id === user?.id) {
       checkAuthStatus();
     }
@@ -84,12 +81,16 @@ function ManageUsersPage() {
     fetchUsers();
   };
 
-  const handleUserDeleted = async () => {
-    if (!deletingUser) return;
+  const handleUserDeleted = async (userToDelete: User) => {
+    const confirmed = window.confirm(
+      `Czy na pewno chcesz usunąć użytkownika: ${userToDelete.firstName} ${userToDelete.lastName}? Tej akcji nie można cofnąć.`
+    );
+
+    if (!confirmed) return;
+
     try {
-      const response = await apiClient.delete(`/users/${deletingUser.id}`);
+      const response = await apiClient.delete(`/users/${userToDelete.id}`);
       if (response.data.success) {
-        setDeletingUser(null);
         fetchCounts();
         fetchUsers();
       }
@@ -158,17 +159,6 @@ function ManageUsersPage() {
           value={search}
           onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
         />
-        {/* <select 
-          className={styles.selectInput}
-          value={selectedRole}
-          onChange={(e) => { setSelectedRole(e.target.value); setCurrentPage(1); }}
-        >
-          <option value="ALL">Wszystkie role</option>
-          <option value="ADMIN">Administrator</option>
-          <option value="TRAINER">Trener</option>
-          <option value="RECEPTIONIST">Recepcja</option>
-          <option value="CLIENT">Klient</option>
-        </select> */}
       </div>
 
       <div className={styles.tableContainer}>
@@ -197,7 +187,7 @@ function ManageUsersPage() {
                       ✎
                     </button>
 
-                    <button className={`${styles.actionBtn} ${styles.deleteBtn}`} title="Usuń" onClick={() => setDeletingUser(user)}>
+                    <button className={`${styles.actionBtn} ${styles.deleteBtn}`} title="Usuń" onClick={() => handleUserDeleted(user)}>
                       🗑
                     </button>
                   </div>
@@ -207,7 +197,7 @@ function ManageUsersPage() {
           </tbody>
         </table>
 
-        {/* Paginacja (Offset Pagination Controls) */}
+        {/* Paginacja */}
         <div className={styles.paginationBar}>
           <span className={styles.paginationInfo}>
             Łącznie: <strong>{counts?.overall}</strong> użytkowników
@@ -242,25 +232,13 @@ function ManageUsersPage() {
 
       {addingUser && (
         <Modal onClose={() => setAddingUser(false)}>
-          <RegisterForm onSuccess={handleUserCreated} />
+          <RegisterForm settingRole onSuccess={handleUserCreated} />
         </Modal>
       )}
 
       {editingUser && (
         <Modal onClose={() => setEditingUser(null)}>
           <EditUserForm includeHeader user={editingUser} onSave={handleUserUpdated} />
-        </Modal>
-      )}
-
-      {/* 3. MODAL: POTWIERDZENIE USUNIĘCIA */}
-      {deletingUser && (
-        <Modal onClose={() => setDeletingUser(null)}>
-          <ConfirmationWindow
-            onConfirm={handleUserDeleted}
-            onClose={() => setDeletingUser(null)}
-          >
-            Czy na pewno chcesz usunąć użytkownika: <strong>{deletingUser.firstName} {deletingUser.lastName}</strong>? Tej akcji nie można cofnąć.
-          </ConfirmationWindow>
         </Modal>
       )}
     </div>

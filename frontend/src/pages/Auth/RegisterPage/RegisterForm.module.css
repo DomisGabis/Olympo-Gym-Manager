@@ -90,3 +90,30 @@
     flex-direction: column;
     gap: 1rem;
 }
+
+.inputGroup input,
+.selectInput {
+    background: rgba(30, 30, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.inputGroup input:focus,
+.selectInput:focus {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+/* Stylizacja natywnego selecta dla zachowania ciemnego motywu */
+.selectInput option {
+    background: #121212;
+    color: #ffffff;
+    padding: 0.5rem;
+}

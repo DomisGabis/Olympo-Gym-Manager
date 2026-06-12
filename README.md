@@ -210,7 +210,7 @@ Dzięki temu system zapewnia ciągłość członkostwa bez ingerencji recepcji.
 | Metoda | Endpoint | Dostęp | Opis |
 |---|---|---|---|
 | GET | `/api/memberships` | Wszyscy zalogowani | Lista karnetów |
-| POST | `/api/memberships` | CLIENT | Zakup karnetu |
+| POST | `/api/memberships` | RECEPTIONIST | Dodanie karnetu |
 | GET | `/api/memberships/my` | CLIENT | Status aktywnego karnetu |
 | GET | `/api/memberships/user/:id` | ADMIN, RECEPTIONIST | Pobiera aktualny (aktywny) karnet wskazanego użytkownika |
 

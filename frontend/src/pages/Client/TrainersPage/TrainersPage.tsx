@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './TrainersPage.module.css';
 import Button from '../../../components/Button/Button';
 import { apiClient } from '../../../services/apiClient';
 import type { PaginationMeta } from '../../../types/common.types';
-import { Navigate } from 'react-router-dom';
 
 interface Trainer {
     id: string;
     firstName: string;
     lastName: string;
-    isMyTrainer: boolean;
+    isMyTrainer?: boolean;
 }
 
 function TrainersPage() {
     const [trainers, setTrainers] = useState<Trainer[]>([]);
+    const [myTrainers, setMyTrainers] = useState<Trainer[]>([]);
     const [meta, setMeta] = useState<PaginationMeta>({ totalItems: 0, totalPages: 1, currentPage: 1, limit: 6 });
     const [loading, setLoading] = useState<boolean>(false);
 
     const [search, setSearch] = useState('');
-    const [selectedSpecialty, setSelectedSpecialty] = useState<string>('ALL');
     const [currentPage, setCurrentPage] = useState(1);
 
     const fetchTrainers = async () => {
@@ -39,12 +38,25 @@ function TrainersPage() {
         }
     };
 
+    const fetchMyTrainers = async () => {
+        try {
+            const response = await apiClient.get('/relationships');
+            if (response.data.success && response.data.data) {
+                setMyTrainers(response.data.data.trainers || []);
+            }
+        } catch (error) {
+            console.error('Błąd pobierania twoich trenerów:', error);
+            setMyTrainers([]);
+        }
+    };
+
     useEffect(() => {
         fetchTrainers();
-    }, [currentPage, selectedSpecialty, search]);
+        fetchMyTrainers();
+    }, [currentPage, search]);
 
-    const myTrainers = trainers.filter(t => t.isMyTrainer);
-    const otherTrainers = trainers.filter(t => !t.isMyTrainer);
+    const myTrainerIds = new Set(myTrainers.map(t => t.id));
+    const otherTrainers = trainers.filter(t => !myTrainerIds.has(t.id));
 
     const renderTrainerCard = (trainer: Trainer) => (
         <div key={trainer.id} className={styles.trainerCard}>
@@ -93,21 +105,12 @@ function TrainersPage() {
                     value={search}
                     onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                 />
-                {/* <select 
-          className={styles.selectInput}
-          value={selectedSpecialty}
-          onChange={(e) => { setSelectedSpecialty(e.target.value); setCurrentPage(1); }}
-        >
-          <option value="ALL">Wszystkie specjalizacje</option>
-          <option value="Trening siłowy">Trening siłowy</option>
-          <option value="Redukcja">Redukcja</option>
-          <option value="CrossFit">CrossFit</option>
-          <option value="Kondycja">Kondycja</option>
-        </select> */}
             </div>
 
-
-            <div className={styles.listsContainer}>
+            {loading ? (
+                <div className={styles.loadingMessage}>Ładowanie trenerów...</div>
+            ) : (
+                <div className={styles.listsContainer}>
                 <div className={styles.sectionBlock}>
                     <h2 className={styles.sectionTitle} data-type="my">Twoi trenerzy</h2>
                     {myTrainers.length ? (
@@ -129,8 +132,8 @@ function TrainersPage() {
                         <p className={styles.noResults}>Nie znaleziono trenerów spełniających kryteria</p>
                     )}
                 </div>
-            </div>
-
+                </div>
+            )}
 
             {/* Paginacja w stylu Dark Mode */}
             {meta.totalPages > 1 && (

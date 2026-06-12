@@ -18,11 +18,16 @@ function HomePage() {
         <div className={styles.container}>
             <h1>Witaj w Olympo, {user?.firstName}!</h1>
             <img src={logo} className={styles.logo} />
-            <div className={styles.cardsContainer}>
-                <QrCodeCard />
-                <EntriesCard />
-                <MembershipCard />
-            </div>
+            {user?.role === 'CLIENT' ?
+                <div className={styles.cardsContainer}>
+                    <QrCodeCard />
+                    <EntriesCard />
+                    <MembershipCard />
+                </div>
+                :
+                <></>
+            }
+
         </div>
     );
 

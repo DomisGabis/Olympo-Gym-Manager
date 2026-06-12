@@ -7,13 +7,15 @@ import { useState } from 'react';
 
 interface Props {
     loginButton?: boolean;
+    settingRole?: boolean;
     onSuccess?: () => void;
 }
 
-function RegisterForm({ loginButton, onSuccess }: Props) {
+function RegisterForm({ loginButton, settingRole, onSuccess }: Props) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [role, setRole] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -28,6 +30,7 @@ function RegisterForm({ loginButton, onSuccess }: Props) {
                 firstName,
                 lastName,
                 email,
+                role,
                 password
             });
 
@@ -90,6 +93,22 @@ function RegisterForm({ loginButton, onSuccess }: Props) {
                     required
                 />
             </div>
+
+            {settingRole &&
+                <div className={styles.formSection}>
+                    <label className={styles.label} htmlFor="role">Rola w systemie</label>
+                    <select
+                        id="role"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        className={styles.selectInput}
+                    >
+                        <option value="CLIENT">CLIENT</option>
+                        <option value="TRAINER">TRAINER</option>
+                        <option value="RECEPTIONIST">RECEPTIONIST</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>}
 
             <div className={styles.formSection}>
                 <label className={styles.label}>Hasło</label>

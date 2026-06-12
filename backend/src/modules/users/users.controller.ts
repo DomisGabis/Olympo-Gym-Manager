@@ -56,6 +56,16 @@ export class UsersController {
     }
   }
 
+  // async getUserById(req: Request, res: Response) {
+  //   try {
+  //     const userId = req.params.id as string;
+  //     const user = await usersService.getById(userId);
+  //     return res.status(200).json({ success: true, data: user });
+  //   } catch (error: any) {
+  //     return res.status(404).json({ success: false, message: error.message });
+  //   }
+  // }
+
   async getClients(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string) || 1;

@@ -2,6 +2,7 @@ import React, { useState, useEffect, type FormEvent } from 'react';
 import styles from './MembershipsPage.module.css';
 import Button from '../../../components/Button/Button';
 import { apiClient } from '../../../services/apiClient';
+import type { PaginationMeta } from '../../../types/common.types';
 
 // Interfejsy danych
 interface Client {
@@ -31,11 +32,11 @@ function MembershipsPage() {
   // Stany list danych
   const [clients, setClients] = useState<Client[]>([]);
   const [plans, setPlans] = useState<MembershipPlan[]>([]);
-  
+
   // Stan wybranego klienta i jego aktualnych karnetów
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [activeMemberships, setActiveMemberships] = useState<ActiveMembership[]>([]);
-  
+
   // Stany formularza i wyszukiwania
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedPlanId, setSelectedPlanId] = useState<string>('');
@@ -50,18 +51,25 @@ function MembershipsPage() {
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [meta, setMeta] = useState<PaginationMeta>({ totalItems: 0, totalPages: 1, currentPage: 1, limit: 10 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState('');
 
   // 1. Pobierz wszystkich klientów przy wejściu na stronę
   useEffect(() => {
     const fetchClients = async () => {
       try {
         setLoadingClients(true);
-        const response = await apiClient.get('/users/clients'); // Dostosuj endpoint
+        let url = `/users/clients?page=${currentPage}&limit=10`;
+        if (search) url += `&search=${search}`;
+
+        const response = await apiClient.get(url);
         if (response.data.success) {
           setClients(response.data.data);
+          setMeta(response.data.meta);
         }
-      } catch (err) {
-        console.error('Błąd pobierania klientów:', err);
+      } catch (error) {
+        console.error('Błąd pobierania klientów:', error);
         setError('Nie udało się załadować listy klientów.');
       } finally {
         setLoadingClients(false);
@@ -110,7 +118,7 @@ function MembershipsPage() {
     fetchClientMemberships(client.id);
   };
 
-  // 4. Obsługa dodawania (zakupu) karnetu dla wybranego klienta
+  // 4. Obsługa dodawania karnetu dla wybranego klienta
   const handleAddMembershipSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selectedClient || !selectedPlanId) return;
@@ -157,7 +165,7 @@ function MembershipsPage() {
       </div>
 
       <div className={styles.layoutGrid}>
-        
+
         {/* LEWA SEKCJA: LISTA KLIENTÓW */}
         <div className={styles.leftColumn}>
           <div className={styles.cardContainer}>
@@ -179,7 +187,7 @@ function MembershipsPage() {
                 filteredClients.map((client) => {
                   const isSelected = selectedClient?.id === client.id;
                   const initials = `${client.firstName.charAt(0)}${client.lastName.charAt(0)}`.toUpperCase();
-                  
+
                   return (
                     <div
                       key={client.id}
@@ -243,7 +251,7 @@ function MembershipsPage() {
               {/* Formularz dodawania nowego karnetu */}
               <div className={styles.formSection}>
                 <h3 className={styles.subSectionTitle}>Dodaj (sprzedaj) nowy karnet</h3>
-                
+
                 {successMessage && <div className={styles.successAlert}>✓ {successMessage}</div>}
                 {error && <div className={styles.errorAlert}>✕ {error}</div>}
 
@@ -293,7 +301,6 @@ function MembershipsPage() {
             </div>
           ) : (
             <div className={styles.placeholderCard}>
-              <div className={styles.placeholderIcon}>💳</div>
               <h3>Nie wybrano klienta</h3>
               <p>Kliknij na dowolnego klienta z listy po lewej stronie, aby zarządzać jego karnetami lub aktywować nowe członkostwo.</p>
             </div>

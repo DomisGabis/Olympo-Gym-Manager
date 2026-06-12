@@ -105,20 +105,7 @@ function EditUserForm({ user, includeHeader, onSave }: Props) {
                     />
                 </div>
 
-                <div className={styles.inputGroup}>
-                    <label htmlFor="role">Rola w systemie</label>
-                    <select
-                        id="role"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value as UserRole)}
-                        className={styles.selectInput}
-                    >
-                        <option value="CLIENT">CLIENT</option>
-                        <option value="TRAINER">TRAINER</option>
-                        <option value="RECEPTIONIST">RECEPTIONIST</option>
-                        <option value="ADMIN">ADMIN</option>
-                    </select>
-                </div>
+                
 
                 <div className={styles.inputGroup}>
                     <label htmlFor="password">

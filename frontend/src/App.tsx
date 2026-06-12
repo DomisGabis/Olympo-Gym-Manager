@@ -13,7 +13,10 @@ import ExerciseDatabasePage from "./pages/Common/ExerciseDatabasePage/ExerciseDa
 import TrainersPage from "./pages/Client/TrainersPage/TrainersPage";
 import TrainerProfilePage from "./pages/Client/TrainerProfilePage/TrainerProfilePage";
 import TrainerDashboardPage from "./pages/Trainer/TrainerDashboardPage/TrainerDashboardPage";
+import CalendarPage from "./pages/Trainer/CalendarPage/CalendarPage";
 import MembershipsPage from "./pages/Receptionist/MembershipsPage/MembershipsPage";
+import ClientProfilePage from "./pages/Trainer/ClientProfilePage/ClientProfilePage";
+import TrainingPlanDetailsPage from "./pages/Client/TrainingPlanDetailsPage/TrainingPlanDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -32,13 +35,6 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "manage-offer", element: (
-          <ProtectedRoute allowedRoles={['ADMIN']}>
-            {/* <ManageOfferPage /> */ <h1>Panel zarządzania ofertą</h1>}
-          </ProtectedRoute>
-        )
-      },
-      {
         path: "exercises", element: (
           <ProtectedRoute allowedRoles={['ADMIN', 'TRAINER']}>
             <ExerciseDatabasePage />
@@ -49,6 +45,13 @@ const router = createBrowserRouter([
         path: "training-plans", element: (
           <ProtectedRoute allowedRoles={['CLIENT']}>
             <TrainingPlansPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "training-plans/:id", element: (
+          <ProtectedRoute allowedRoles={['CLIENT']}>
+            <TrainingPlanDetailsPage />
           </ProtectedRoute>
         )
       },
@@ -67,9 +70,16 @@ const router = createBrowserRouter([
         )
       },
       {
+        path: "client/:id", element: (
+          <ProtectedRoute allowedRoles={['TRAINER']}>
+            <ClientProfilePage />
+          </ProtectedRoute>
+        )
+      },
+      {
         path: "calendar", element: (
           <ProtectedRoute allowedRoles={['TRAINER']}>
-            <TrainerProfilePage />
+            <CalendarPage />
           </ProtectedRoute>
         )
       },

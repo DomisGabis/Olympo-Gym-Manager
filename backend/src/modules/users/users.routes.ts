@@ -12,6 +12,7 @@ router.use(passport.authenticate('jwt', { session: false }));
 router.get('/profile', usersController.getProfile); // Każdy zalogowany widzi swój profil
 router.patch('/profile', usersController.updateProfile); // Edycja własnego profilu użytkownika
 router.get('/trainers', usersController.getTrainers); // Każdy zalogowany widzi listę trenerów z paginacją
+// router.get('/:id', usersController.getUserById); // Pobierz profil użytkownika po id
 router.get('/clients', authorizeRoles('ADMIN', 'RECEPTIONIST'), usersController.getClients); // Lista klientów z paginacją
 router.get('/receptionists', authorizeRoles('ADMIN', 'RECEPTIONIST'), usersController.getReceptionists); // Lista recepcjonistów
 router.get('/admins', authorizeRoles('ADMIN', 'RECEPTIONIST'), usersController.getAdmins); // Lista administratorów

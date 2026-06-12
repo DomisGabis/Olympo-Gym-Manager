@@ -1,5 +1,5 @@
-import React, { useState, useEffect, type FormEvent } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, type FormEvent } from 'react';
+import { useParams } from 'react-router-dom';
 import styles from './TrainerProfilePage.module.css';
 import Button from '../../../components/Button/Button';
 import { ChatBox } from '../../../components/Chatbox/Chatbox';
@@ -8,7 +8,6 @@ import type { User } from '../../../types/user.types';
 
 function TrainerProfilePage() {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
 
     const [trainer, setTrainer] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -23,14 +22,29 @@ function TrainerProfilePage() {
 
     // Fetchowanie profilu trenera
     const fetchTrainerProfile = async () => {
+        if (!id) return;
+        
         try {
             setLoading(true);
-            const response = await apiClient.get(`/users/trainers`);
+            setError(null);
+            
+            // 1. Pobieramy listę wszystkich relacji (użytkowników)
+            const response = await apiClient.get('/relationships');
+            console.log(response);
+            
             if (response.data.success) {
-                const foundTrainer = response.data.data.find((item: any) => item.id === id);
-                setTrainer(foundTrainer || null);
+                const trainersList: User[] = response.data.data.trainers || [];
+                
+                // 2. Szukamy konkretnego trenera po ID z URL
+                const foundTrainer = trainersList.find((t) => t.id === id);
+                
+                if (foundTrainer) {
+                    setTrainer(foundTrainer);
+                } else {
+                    setError('Nie znaleziono profilu tego trenera w Twoich relacjach.');
+                }
             } else {
-                setError('Nie udało się załadować profilu trenera.');
+                setError('Nie udało się załadować listy trenerów.');
             }
         } catch (err: any) {
             console.error(err);
@@ -52,11 +66,15 @@ function TrainerProfilePage() {
         setBookingSuccess(false);
 
         try {
-            const response = await apiClient.post('/bookings', {
-                trainerId: id,
-                date: bookingDate,
-                time: bookingTime,
-                message: clientMessage.trim() || undefined,
+            // Łączenie daty i czasu w format ISO
+            const startDateTime = new Date(`${bookingDate}T${bookingTime}`);
+            const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); // +1 godzina
+
+            const response = await apiClient.post('/calendar', {
+                targetId: id,
+                title: clientMessage.trim() || 'Sesja treningowa',
+                startAt: startDateTime.toISOString(),
+                endAt: endDateTime.toISOString(),
             });
 
             if (response.data.success) {
@@ -69,7 +87,7 @@ function TrainerProfilePage() {
             }
         } catch (err: any) {
             console.error(err);
-            setError(err.response?.data?.message || 'Błąd podczas wysyłania zgłoszenia.');
+            setError(err.response?.data?.message || 'Błąd podczas wysyłania rezerwacji.');
         } finally {
             setBookingLoading(false);
         }

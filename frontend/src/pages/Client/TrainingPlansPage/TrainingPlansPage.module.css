@@ -1,26 +1,249 @@
+.pageWrapper {
+  width: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #ffffff;
+}
+
+.pageHeader p {
+  margin: 0.5rem 0 0 0;
+  color: #c4c4c4;
+  font-size: 0.95rem;
+}
+
+.counterBadge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.65rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.counterBadge span {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-left: 0.35rem;
+}
+
+.centerMessage,
+.errorMessage {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+  color: #c4c4c4;
+}
+
+.errorMessage {
+  background: rgba(220, 53, 69, 0.08);
+  color: #ffb3b3;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 12px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+}
+
+.emptyState p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.emptyState span {
+  color: #b0b0b0;
+  font-size: 0.95rem;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.planCard {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.planCard:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.headerInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.planTitle {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trainerName {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #999999;
+}
+
+.expiredBadge {
+  background: rgba(220, 53, 69, 0.15);
+  color: #ff6b7a;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.dateRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.85rem;
+  color: #b0b0b0;
+}
+
+.dateLabel {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.dateLabel strong {
+  color: #d4af37;
+  font-weight: 700;
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.progressValue {
+  color: #d4af37;
+}
+
+.progressBar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progressFill {
+  background: linear-gradient(90deg, #d4af37, #f0d16e);
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+.statsRow {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #c4c4c4;
+}
+
+.statsRow strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.viewBtn {
+  flex: 1;
+  min-width: 100px;
+}
+
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .contentHeader {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .planCount {
-    font-size: 18px;
-    font-weight: bold;
-    color: #666;
+  font-size: 18px;
+  font-weight: bold;
+  color: #666;
 }
 
 .addButton {
-    max-width: 200px;
+  max-width: 200px;
 }
+
