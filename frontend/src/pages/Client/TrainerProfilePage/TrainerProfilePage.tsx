@@ -23,28 +23,18 @@ function TrainerProfilePage() {
     // Fetchowanie profilu trenera
     const fetchTrainerProfile = async () => {
         if (!id) return;
-        
+
         try {
             setLoading(true);
             setError(null);
-            
-            // 1. Pobieramy listę wszystkich relacji (użytkowników)
-            const response = await apiClient.get('/relationships');
+
+            const response = await apiClient.get(`/users/trainers/${id}`);
             console.log(response);
-            
+
             if (response.data.success) {
-                const trainersList: User[] = response.data.data.trainers || [];
-                
-                // 2. Szukamy konkretnego trenera po ID z URL
-                const foundTrainer = trainersList.find((t) => t.id === id);
-                
-                if (foundTrainer) {
-                    setTrainer(foundTrainer);
-                } else {
-                    setError('Nie znaleziono profilu tego trenera w Twoich relacjach.');
-                }
+                setTrainer(response.data.data);
             } else {
-                setError('Nie udało się załadować listy trenerów.');
+                setError('Nie udało się załadować danych trenera.');
             }
         } catch (err: any) {
             console.error(err);

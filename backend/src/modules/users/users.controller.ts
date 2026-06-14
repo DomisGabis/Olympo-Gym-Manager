@@ -56,6 +56,20 @@ export class UsersController {
     }
   }
 
+  async getTrainerById(req: Request, res: Response) {
+    try {
+      const id = req.params.id as string;
+      const result = await usersService.getTrainerById(id);
+      
+      return res.status(200).json({ 
+        success: true, 
+        data: result
+      });
+    } catch (error: any) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
   // async getUserById(req: Request, res: Response) {
   //   try {
   //     const userId = req.params.id as string;

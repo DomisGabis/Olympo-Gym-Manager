@@ -13,7 +13,7 @@ import ExerciseDatabasePage from "./pages/Common/ExerciseDatabasePage/ExerciseDa
 import TrainersPage from "./pages/Client/TrainersPage/TrainersPage";
 import TrainerProfilePage from "./pages/Client/TrainerProfilePage/TrainerProfilePage";
 import TrainerDashboardPage from "./pages/Trainer/TrainerDashboardPage/TrainerDashboardPage";
-import CalendarPage from "./pages/Trainer/CalendarPage/CalendarPage";
+import CalendarPage from "./pages/Common/CalendarPage/CalendarPage";
 import MembershipsPage from "./pages/Receptionist/MembershipsPage/MembershipsPage";
 import ClientProfilePage from "./pages/Trainer/ClientProfilePage/ClientProfilePage";
 import TrainingPlanDetailsPage from "./pages/Client/TrainingPlanDetailsPage/TrainingPlanDetailsPage";
@@ -79,7 +79,7 @@ const router = createBrowserRouter([
       },
       {
         path: "calendar", element: (
-          <ProtectedRoute allowedRoles={['TRAINER']}>
+          <ProtectedRoute allowedRoles={['TRAINER', 'CLIENT']}>
             <CalendarPage />
           </ProtectedRoute>
         )

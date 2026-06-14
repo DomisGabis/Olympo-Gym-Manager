@@ -209,7 +209,7 @@ function TrainingPlanDetailsPage() {
                                     ) : entry.isCompleted ? (
                                         '✓ Ukończone'
                                     ) : (
-                                        'Oznacz jako zrobione'
+                                        'Odznacz'
                                     )}
                                 </Button>
                             </div>

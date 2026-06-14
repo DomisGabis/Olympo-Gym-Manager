@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { apiClient } from '../../../services/apiClient';
 import Button from '../../../components/Button/Button';
 import styles from './CalendarPage.module.css';
+import { useAuth } from '../../../context/AuthContext';
 
 interface CalendarEntry {
   id: string;
@@ -41,6 +42,7 @@ const isSameDay = (a: Date, b: Date) =>
   a.getDate() === b.getDate() && a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear();
 
 const CalendarPage = () => {
+  const { user } = useAuth();
   const [entries, setEntries] = useState<CalendarEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,8 +124,8 @@ const CalendarPage = () => {
     <div className={styles.pageWrapper}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className="pageTitle">Kalendarz trenera</h1>
-          <p className="pageSubtitle">Przeglądaj swój plan miesięczny i akceptuj spotkania od klientów.</p>
+          <h1 className="pageTitle">Kalendarz spotkań</h1>
+          <p className="pageSubtitle">Przeglądaj swój plan miesięczny i zarządzaj spotkaniami</p>
         </div>
       </div>
 
@@ -168,9 +170,11 @@ const CalendarPage = () => {
                   <div className={styles.eventList}>
                     {events.slice(0, 3).map((event) => {
                       // Bezpieczne wyciągnięcie imienia i nazwiska klienta
-                      const clientName = event.relation.client
+                      const relationPartnerName = (user?.role === 'TRAINER') ? (event.relation.client
                         ? `${event.relation.client.firstName} ${event.relation.client.lastName}`
-                        : 'Brak przypisanego klienta';
+                        : 'Brak przypisanej osoby') : (event.relation.trainer
+                          ? `${event.relation.trainer.firstName} ${event.relation.trainer.lastName}`
+                          : 'Brak przypisanej osoby');
 
                       return (
                         <div key={event.id} className={styles.eventItem}>
@@ -181,7 +185,11 @@ const CalendarPage = () => {
                           <div className={styles.eventTooltip}>
                             <div className={styles.tooltipHeader}>{event.title}</div>
                             <div className={styles.tooltipBody}>
-                              <p><span>Klient:</span> {clientName}</p>
+                              <p>
+                                {
+                                  (user?.role === 'TRAINER') ?
+                                    (<span>Klient: </span>) : (<span>Trener: </span>)}
+                                {relationPartnerName}</p>
                               {event.relation.client?.email && (
                                 <p><span>Email:</span> {event.relation.client.email}</p>
                               )}
@@ -216,20 +224,19 @@ const CalendarPage = () => {
           ) : (
             <div className={styles.pendingList}>
               {pendingEntries.map((entry) => {
-                const clientName = entry.relation.client
-                  ? `${entry.relation.client.firstName} ${entry.relation.client.lastName}`
-                  : 'Klient';
+                const relationPartner = (user?.role === 'TRAINER') ? entry.relation.client : entry.relation.trainer;
+                const relationPartnerName = relationPartner ? (`${relationPartner.firstName} ${relationPartner.lastName}`) : 'Nieznane';
                 return (
                   <div key={entry.id} className={styles.pendingCard}>
                     <div className={styles.pendingMeta}>
                       <span className={styles.pendingTitle}>{entry.title}</span>
-                      <span className={styles.pendingClient}>{clientName}</span>
+                      <span className={styles.pendingClient}>{relationPartnerName}</span>
                     </div>
                     <div className={styles.pendingInfo}>
                       <span>{new Date(entry.startAt).toLocaleDateString('pl-PL')}</span>
                       <span>{formatTime(entry.startAt)} - {formatTime(entry.endAt)}</span>
                     </div>
-                    <div className={styles.pendingActions}>
+                    {user?.role === 'TRAINER' && (<div className={styles.pendingActions}>
                       <Button
                         type="button"
                         style="primary"
@@ -246,7 +253,7 @@ const CalendarPage = () => {
                       >
                         Odrzuć
                       </Button>
-                    </div>
+                    </div>)}
                   </div>
                 );
               })}

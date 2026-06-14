@@ -9,16 +9,6 @@ import ConfirmationWindow from '../../../components/ConfirmationWindow/Confirmat
 import ExerciseForm from './ExerciseForm'
 import { useAuth } from '../../../context/AuthContext';
 
-interface ExerciseCounts {
-  overall: number;
-  byCategory: {
-    NOGI: number;
-    KLATKA: number;
-    PLECY: number;
-    BARKI: number;
-  };
-}
-
 function ExerciseDatabasePage() {
   const { user } = useAuth();
   const [exercises, setExercises] = useState<Exercise[]>([]);

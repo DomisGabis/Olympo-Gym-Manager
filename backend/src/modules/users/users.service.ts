@@ -120,6 +120,11 @@ export class UsersService {
     return this.getAll(page, limit, Role.TRAINER, search);
   }
 
+  async getTrainerById(id: string) {
+    const result = this.getById(id);
+    return result;
+  }
+
   /**
    * Zwraca liczby użytkowników: ogółem oraz rozbite po rolach
    */

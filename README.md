@@ -145,7 +145,8 @@ Authorization: Bearer <TWÓJ_TOKEN_JWT>
 | GET | `/api/users/profile` | Wszyscy zalogowani | Profil użytkownika |
 | PATCH | `/api/users/profile` | Wszyscy zalogowani | Aktualizacja własnego profilu użytkownika |
 | PATCH | `/api/users/:id` | ADMIN | Edycja profilu dowolnego użytkownika przez administratora |
-| GET | `/api/users/trainers` | ADMIN, RECEPTIONIST | Lista trenerów |
+| GET | `/api/users/trainers` | Wszyscy zalogowani | Lista trenerów |
+| GET | `/api/users/trainers/:id` | Wszyscy zalogowani | Dane trenera |
 | GET | `/api/users/clients` | ADMIN, RECEPTIONIST | Lista klientów |
 | GET | `/api/users/receptionists` | ADMIN, RECEPTIONIST | Lista recepcjonistów |
 | GET | `/api/users/admins` | ADMIN, RECEPTIONIST | Lista administratorów |

@@ -23,6 +23,11 @@ function Navbar({ role }: Props) {
                     <img className={styles.logo} src={logo} alt="Olympo Logo" />
                     <h1 className={styles.logoText}>Olympo</h1>
                 </Link>
+                {(role === 'TRAINER' || role === 'CLIENT') && (
+                    <Button style="navbar" link="/calendar">
+                        Kalendarz
+                    </Button>
+                )}
                 {role === 'CLIENT' && (
                     <Button style="navbar" link="/training-plans">
                         Plan treningowy
@@ -43,11 +48,7 @@ function Navbar({ role }: Props) {
                         Powiadomienia
                     </Button>
                 )} */}
-                {(role === 'TRAINER') && (
-                    <Button style="navbar" link="/calendar">
-                        Kalendarz
-                    </Button>
-                )}
+                
                 {(role === 'TRAINER') && (
                     <Button style="navbar" link="/trainer-dashboard">
                         Podopieczni
